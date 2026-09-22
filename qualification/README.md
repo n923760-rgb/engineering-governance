@@ -38,6 +38,13 @@ Environment / resource gate:
 - missing working path rejected;
 - insufficient free disk rejected before mutation.
 
+Project adoption bootstrap:
+- creates a bounded governance starter pack;
+- leaves unknown live fields unresolved rather than inventing values;
+- marks the project DRAFT until live qualification;
+- refuses to overwrite existing governance files;
+- rejects invalid repository identities.
+
 Secret hygiene:
 - clean tracked text passes the baseline secret scanner;
 - a synthetic secret-like value is rejected.

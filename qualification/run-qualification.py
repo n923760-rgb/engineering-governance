@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
 ENVIRONMENT_GATE = ROOT / "scripts" / "verify-environment-capacity.py"
+BOOTSTRAP = ROOT / "scripts" / "bootstrap-project.py"
 TASK_VALIDATOR = ROOT / "scripts" / "validate-task-packet.py"
 RESULT_VALIDATOR = ROOT / "scripts" / "validate-result-packet.py"
 EVIDENCE_VALIDATOR = ROOT / "scripts" / "validate-evidence-manifest.py"
@@ -288,6 +289,86 @@ def qualify_environment_gate(tmp: Path) -> None:
     )
 
 
+
+def qualify_project_bootstrap(tmp: Path) -> None:
+    target = tmp / "adoption-target"
+    expect_code(
+        "project governance bootstrap succeeds",
+        [
+            sys.executable,
+            str(BOOTSTRAP),
+            "--project-name",
+            "Qualification Project",
+            "--repository",
+            "owner/qualification-project",
+            "--official-branch",
+            "main",
+            "--destination",
+            str(target),
+        ],
+        0,
+        output_must_contain="status=DRAFT_LIVE_VERIFICATION_REQUIRED",
+    )
+
+    governance = target / "governance"
+    expected = {
+        "PROJECT_PROFILE.md",
+        "project-profile.json",
+        "REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
+        "ENGINEERING_ENVIRONMENT_CONTRACT.md",
+        "RESOURCE_MAP.md",
+        "ADOPTION_STATUS.md",
+    }
+    actual = {path.name for path in governance.iterdir() if path.is_file()}
+    require(expected == actual, f"bootstrap files mismatch: expected={expected} actual={actual}")
+
+    profile = json.loads((governance / "project-profile.json").read_text(encoding="utf-8"))
+    require(profile["project_name"] == "Qualification Project", "bootstrap project name mismatch")
+    require(profile["repository"] == "owner/qualification-project", "bootstrap repository mismatch")
+    require(profile["official_branch"] == "main", "bootstrap branch mismatch")
+    require(
+        profile["status"] == "DRAFT_LIVE_VERIFICATION_REQUIRED",
+        "bootstrap must not auto-qualify a project",
+    )
+    require(
+        profile.get("execution_environment") is None,
+        "bootstrap must not invent execution environment identity",
+    )
+    print("PASS: generated governance profile remains draft and project-specific")
+
+    expect_code(
+        "bootstrap refuses to overwrite governance files",
+        [
+            sys.executable,
+            str(BOOTSTRAP),
+            "--project-name",
+            "Qualification Project",
+            "--repository",
+            "owner/qualification-project",
+            "--destination",
+            str(target),
+        ],
+        20,
+        output_must_contain="refusing to overwrite existing governance files",
+    )
+
+    invalid = tmp / "invalid-adoption-target"
+    expect_code(
+        "bootstrap rejects invalid repository identity",
+        [
+            sys.executable,
+            str(BOOTSTRAP),
+            "--project-name",
+            "Qualification Project",
+            "--repository",
+            "not-owner-slash-repository",
+            "--destination",
+            str(invalid),
+        ],
+        2,
+        output_must_contain="repository must use owner/name form",
+    )
+
 def qualify_live_gate(tmp: Path) -> None:
     work, expected_head = build_live_gate_fixture(tmp / "live-gate")
 
@@ -378,6 +459,7 @@ def main() -> None:
             qualify_result_packet_validation(tmp)
             qualify_evidence_manifest_validation(tmp)
             qualify_environment_gate(tmp)
+            qualify_project_bootstrap(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
         except QualificationFailure as exc:
