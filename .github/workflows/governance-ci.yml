@@ -40,6 +40,9 @@ jobs:
       - name: Run governance stop-condition qualification
         run: python qualification/run-qualification.py
 
+      - name: Verify v1 release-candidate readiness
+        run: python scripts/verify-v1-readiness.py
+
       - name: Record source identity
         run: |
           printf 'tested_sha=%s\n' "$(git rev-parse HEAD)"
