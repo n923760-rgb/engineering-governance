@@ -29,10 +29,13 @@ REQUIRED_PATHS = [
     "schemas/project-profile.schema.json",
     "schemas/task-packet.schema.json",
     "schemas/result-packet.schema.json",
+    "examples/task-packet.example.json",
+    "examples/result-packet.example.json",
     "scripts/verify-repository-state.sh",
     "scripts/verify-clean-tree.sh",
     "scripts/collect-git-evidence.sh",
     "scripts/validate-task-packet.py",
+    "scripts/validate-result-packet.py",
     "docs/AUTHORITY_MODEL.md",
     "docs/CONTROLLER_EXECUTOR_MODEL.md",
     "docs/EVIDENCE_POLICY.md",
@@ -98,8 +101,9 @@ def check_python() -> None:
             fail(f"Python syntax error in {path.relative_to(ROOT)}: {exc.msg}")
 
 
-def check_task_example() -> None:
+def check_packet_examples() -> None:
     run([sys.executable, "scripts/validate-task-packet.py", "examples/task-packet.example.json"])
+    run([sys.executable, "scripts/validate-result-packet.py", "examples/result-packet.example.json"])
 
 
 def check_master_integrity() -> None:
@@ -119,9 +123,18 @@ def check_master_integrity() -> None:
 
 def check_template_contracts() -> None:
     expectations = {
-        "templates/TASK_PACKET.md": ["## TASK TYPE", "## AUTHORITY", "## LIVE GATE", "## STOP CONDITIONS", "## SUCCESS CRITERIA"],
-        "templates/RESULT_PACKET.md": ["## Repository Identity", "## Validation Actually Run", "### Facts", "### Inferences", "### Assumptions", "## Residual Risks"],
-        "templates/PROJECT_PROFILE.md": ["PROJECT NAME:", "REPOSITORY:", "OFFICIAL BRANCH:", "PROTECTED ACTIONS:", "TEST STRATEGY:"],
+        "templates/TASK_PACKET.md": [
+            "## TASK TYPE", "## AUTHORITY", "## MACHINE-READABLE ACTION AUTHORITY",
+            "## LIVE GATE", "## STOP CONDITIONS", "## SUCCESS CRITERIA",
+        ],
+        "templates/RESULT_PACKET.md": [
+            "## Repository Identity", "## Validation Actually Run",
+            "### Facts", "### Inferences", "### Assumptions", "## Residual Risks",
+        ],
+        "templates/PROJECT_PROFILE.md": [
+            "PROJECT NAME:", "REPOSITORY:", "OFFICIAL BRANCH:",
+            "PROTECTED ACTIONS:", "TEST STRATEGY:",
+        ],
     }
     for rel, anchors in expectations.items():
         content = (ROOT / rel).read_text(encoding="utf-8")
@@ -149,7 +162,7 @@ def main() -> None:
     check_json()
     check_shell()
     check_python()
-    check_task_example()
+    check_packet_examples()
     check_master_integrity()
     check_template_contracts()
     check_git_exclusions()

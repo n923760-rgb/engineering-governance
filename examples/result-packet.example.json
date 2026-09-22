@@ -1,0 +1,31 @@
+{
+  "task_id": "EXAMPLE-001",
+  "task_type": "IMPLEMENTATION",
+  "task_packet_ref": "examples/task-packet.example.json",
+  "executor": "Engineering Executor",
+  "execution_environment": "example-development-environment",
+  "repository": "owner/example-project",
+  "official_branch": "main",
+  "verified_remote_official_head": "0123456789abcdef0123456789abcdef01234567",
+  "exact_tested_head": "89abcdef0123456789abcdef0123456789abcdef",
+  "authorized_actions": ["read", "modify", "commit", "push"],
+  "actions_actually_performed": ["read", "modify", "commit"],
+  "validation": [
+    {
+      "check": "targeted contract test",
+      "status": "PASS",
+      "evidence": ["artifact://tests/targeted-contract.txt"]
+    },
+    {
+      "check": "production deployment",
+      "status": "NOT RUN",
+      "evidence": [],
+      "reason": "Production deployment is outside task authority."
+    }
+  ],
+  "facts": ["The targeted contract test passed on the exact tested HEAD."],
+  "inferences": ["The bounded defect is corrected within the tested contract."],
+  "assumptions": [],
+  "residual_risks": ["Production deployment was not performed."],
+  "recommended_next_action": "Review the bounded diff and merge only if separately authorized."
+}

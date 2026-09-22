@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Adversarial qualification tests for the governance safety gates.
-
-The suite intentionally creates bad repository/task states and proves that the
-governance tools stop safely with the documented exit codes. All fixtures are
-ephemeral and contain no production source or credentials.
-"""
+"""Adversarial qualification tests for governance safety, authority, and evidence."""
 from __future__ import annotations
 
 import json
@@ -17,8 +12,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
 TASK_VALIDATOR = ROOT / "scripts" / "validate-task-packet.py"
+RESULT_VALIDATOR = ROOT / "scripts" / "validate-result-packet.py"
 SECRET_SCANNER = ROOT / "scripts" / "scan-secrets.py"
 VALID_TASK = ROOT / "examples" / "task-packet.example.json"
+VALID_RESULT = ROOT / "examples" / "result-packet.example.json"
 
 
 class QualificationFailure(RuntimeError):
@@ -86,6 +83,10 @@ def build_live_gate_fixture(base: Path) -> tuple[Path, str]:
     return work, expected_head
 
 
+def write_json(path: Path, data: dict) -> None:
+    path.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+
+
 def qualify_task_packet_validation(tmp: Path) -> None:
     expect_code(
         "valid task packet accepted",
@@ -97,7 +98,7 @@ def qualify_task_packet_validation(tmp: Path) -> None:
     missing = tmp / "task-missing-field.json"
     data = json.loads(VALID_TASK.read_text(encoding="utf-8"))
     data.pop("scope")
-    missing.write_text(json.dumps(data), encoding="utf-8")
+    write_json(missing, data)
     expect_code(
         "missing task field rejected",
         [sys.executable, str(TASK_VALIDATOR), str(missing)],
@@ -108,12 +109,90 @@ def qualify_task_packet_validation(tmp: Path) -> None:
     bad_sha = tmp / "task-bad-sha.json"
     data = json.loads(VALID_TASK.read_text(encoding="utf-8"))
     data["expected_official_head"] = "not-a-sha"
-    bad_sha.write_text(json.dumps(data), encoding="utf-8")
+    write_json(bad_sha, data)
     expect_code(
         "malformed expected SHA rejected",
         [sys.executable, str(TASK_VALIDATOR), str(bad_sha)],
         1,
         output_must_contain="must look like a Git SHA",
+    )
+
+    requested_not_authorized = tmp / "task-requested-not-authorized.json"
+    data = json.loads(VALID_TASK.read_text(encoding="utf-8"))
+    data["requested_actions"].append("merge")
+    write_json(requested_not_authorized, data)
+    expect_code(
+        "requested action without authority rejected",
+        [sys.executable, str(TASK_VALIDATOR), str(requested_not_authorized)],
+        1,
+        output_must_contain="requested actions are not authorized: merge",
+    )
+
+    protected_without_owner = tmp / "task-protected-without-owner.json"
+    data = json.loads(VALID_TASK.read_text(encoding="utf-8"))
+    data["requested_actions"].append("merge")
+    data["authorized_actions"].append("merge")
+    write_json(protected_without_owner, data)
+    expect_code(
+        "protected action without owner authorization rejected",
+        [sys.executable, str(TASK_VALIDATOR), str(protected_without_owner)],
+        1,
+        output_must_contain="lacks explicit owner authorization",
+    )
+
+    protected_with_owner = tmp / "task-protected-with-owner.json"
+    data["protected_action_authorizations"]["merge"] = {
+        "source": "CURRENT_OWNER_INSTRUCTION",
+        "reference": "owner explicitly authorized merge for this bounded task",
+    }
+    write_json(protected_with_owner, data)
+    expect_code(
+        "protected action with explicit owner authorization accepted",
+        [sys.executable, str(TASK_VALIDATOR), str(protected_with_owner)],
+        0,
+        output_must_contain="VALID:",
+    )
+
+
+def qualify_result_packet_validation(tmp: Path) -> None:
+    expect_code(
+        "valid result packet accepted",
+        [sys.executable, str(RESULT_VALIDATOR), str(VALID_RESULT)],
+        0,
+        output_must_contain="VALID:",
+    )
+
+    pass_without_evidence = tmp / "result-pass-without-evidence.json"
+    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
+    data["validation"][0]["evidence"] = []
+    write_json(pass_without_evidence, data)
+    expect_code(
+        "PASS without evidence rejected",
+        [sys.executable, str(RESULT_VALIDATOR), str(pass_without_evidence)],
+        1,
+        output_must_contain="requires meaningful evidence",
+    )
+
+    not_run_without_reason = tmp / "result-not-run-without-reason.json"
+    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
+    data["validation"][1].pop("reason")
+    write_json(not_run_without_reason, data)
+    expect_code(
+        "NOT RUN without reason rejected",
+        [sys.executable, str(RESULT_VALIDATOR), str(not_run_without_reason)],
+        1,
+        output_must_contain="requires a reason",
+    )
+
+    performed_without_authority = tmp / "result-performed-without-authority.json"
+    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
+    data["actions_actually_performed"].append("merge")
+    write_json(performed_without_authority, data)
+    expect_code(
+        "performed action outside authority rejected",
+        [sys.executable, str(RESULT_VALIDATOR), str(performed_without_authority)],
+        1,
+        output_must_contain="actions actually performed exceed authorization: merge",
     )
 
 
@@ -183,8 +262,10 @@ def qualify_secret_scanner(tmp: Path) -> None:
         output_must_contain="PASS:",
     )
 
-    # Deliberately synthetic/nonfunctional value used only to prove detection.
-    (repo / "unsafe.txt").write_text("api_" + "key=" + "qualificationFakeSecret12345" + "\n", encoding="utf-8")
+    (repo / "unsafe.txt").write_text(
+        "api_" + "key=" + "qualificationFakeSecret12345" + "\n",
+        encoding="utf-8",
+    )
     git(repo, "add", "unsafe.txt")
     expect_code(
         "synthetic secret pattern blocks qualification",
@@ -202,12 +283,13 @@ def main() -> None:
         tmp = Path(td)
         try:
             qualify_task_packet_validation(tmp)
+            qualify_result_packet_validation(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
         except QualificationFailure as exc:
             print(f"FAIL: {exc}", file=sys.stderr)
             raise SystemExit(1)
-    print("PASS: governance stop-condition qualification suite completed")
+    print("PASS: governance qualification suite completed")
 
 
 if __name__ == "__main__":

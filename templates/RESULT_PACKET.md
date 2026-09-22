@@ -3,6 +3,7 @@
 ## Task Identity
 Task ID:
 Task type:
+Task packet reference:
 Executor:
 Execution environment:
 Started:
@@ -22,6 +23,8 @@ Git status after:
 Authorized actions:
 Actions actually performed:
 
+Rule: every action actually performed must be a subset of Authorized actions.
+
 ## Scope
 Completed:
 Observed but intentionally left out of scope:
@@ -33,13 +36,16 @@ Result:
 Evidence path:
 
 ## Validation Actually Run
-Check:
-Result: PASS / FAIL / BLOCKED / SKIPPED / NOT RUN
-Evidence:
+For each check record:
+- Check:
+- Result: PASS / FAIL / BLOCKED / SKIPPED / NOT RUN
+- Evidence:
+- Reason: required for BLOCKED / SKIPPED / NOT RUN
 
-## Validation Not Run
-Check:
-Reason:
+Rules:
+- PASS, FAIL, and BLOCKED require attributable evidence.
+- BLOCKED, SKIPPED, and NOT RUN require a reason.
+- NOT RUN must never be reported as PASS.
 
 ## Findings
 

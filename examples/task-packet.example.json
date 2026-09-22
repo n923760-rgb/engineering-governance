@@ -1,7 +1,7 @@
 {
   "title": "Correct one confirmed defect",
   "task_type": "IMPLEMENTATION",
-  "authority": "Inspect and modify only the files required for the stated defect; local validation allowed; no merge or release.",
+  "authority": "Inspect and modify only the files required for the stated defect; local validation, commit, and push are allowed; protected actions are not authorized.",
   "repository": "owner/example-project",
   "official_branch": "main",
   "expected_official_head": "0123456789abcdef0123456789abcdef01234567",
@@ -14,5 +14,9 @@
   "artifacts": "Task result and relevant test evidence.",
   "stop_conditions": "Stop on live-state mismatch, authority ambiguity, secret exposure, or scope expansion.",
   "report_path": ".reports/example-task.md",
-  "success_criteria": "The confirmed defect is corrected on the exact tested SHA with attributable evidence."
+  "success_criteria": "The confirmed defect is corrected on the exact tested SHA with attributable evidence.",
+  "requested_actions": ["read", "modify", "commit", "push"],
+  "authorized_actions": ["read", "modify", "commit", "push"],
+  "protected_actions": ["merge", "release", "tag", "production_deploy", "force_push", "history_rewrite", "destructive_infrastructure", "credential_rotation"],
+  "protected_action_authorizations": {}
 }
