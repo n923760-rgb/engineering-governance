@@ -34,6 +34,9 @@ jobs:
       - name: Scan tracked text for baseline secret patterns
         run: python scripts/scan-secrets.py
 
+      - name: Run governance stop-condition qualification
+        run: python qualification/run-qualification.py
+
       - name: Record source identity
         run: |
           printf 'tested_sha=%s\n' "$(git rev-parse HEAD)"
