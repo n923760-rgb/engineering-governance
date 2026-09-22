@@ -13,9 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
 TASK_VALIDATOR = ROOT / "scripts" / "validate-task-packet.py"
 RESULT_VALIDATOR = ROOT / "scripts" / "validate-result-packet.py"
+EVIDENCE_VALIDATOR = ROOT / "scripts" / "validate-evidence-manifest.py"
 SECRET_SCANNER = ROOT / "scripts" / "scan-secrets.py"
 VALID_TASK = ROOT / "examples" / "task-packet.example.json"
 VALID_RESULT = ROOT / "examples" / "result-packet.example.json"
+VALID_EVIDENCE = ROOT / "examples" / "evidence-manifest.example.json"
 
 
 class QualificationFailure(RuntimeError):
@@ -196,6 +198,54 @@ def qualify_result_packet_validation(tmp: Path) -> None:
     )
 
 
+def qualify_evidence_manifest_validation(tmp: Path) -> None:
+    expect_code(
+        "valid evidence manifest accepted",
+        [sys.executable, str(EVIDENCE_VALIDATOR), str(VALID_EVIDENCE)],
+        0,
+        output_must_contain="VALID:",
+    )
+
+    fixture = ROOT / "examples" / "artifacts" / "evidence-fixture.txt"
+    base = tmp / "evidence"
+    artifacts = base / "artifacts"
+    artifacts.mkdir(parents=True)
+    shutil.copy2(fixture, artifacts / "evidence-fixture.txt")
+
+    checksum_mismatch = base / "checksum-mismatch.json"
+    data = json.loads(VALID_EVIDENCE.read_text(encoding="utf-8"))
+    data["artifacts"][0]["sha256"] = "0" * 64
+    write_json(checksum_mismatch, data)
+    expect_code(
+        "evidence checksum mismatch rejected",
+        [sys.executable, str(EVIDENCE_VALIDATOR), str(checksum_mismatch)],
+        1,
+        output_must_contain="SHA-256 mismatch",
+    )
+
+    missing_artifact = base / "missing-artifact.json"
+    data = json.loads(VALID_EVIDENCE.read_text(encoding="utf-8"))
+    data["artifacts"][0]["path"] = "artifacts/missing.txt"
+    write_json(missing_artifact, data)
+    expect_code(
+        "missing evidence artifact rejected",
+        [sys.executable, str(EVIDENCE_VALIDATOR), str(missing_artifact)],
+        1,
+        output_must_contain="artifact is missing",
+    )
+
+    traversal = base / "path-traversal.json"
+    data = json.loads(VALID_EVIDENCE.read_text(encoding="utf-8"))
+    data["artifacts"][0]["path"] = "../outside.txt"
+    write_json(traversal, data)
+    expect_code(
+        "evidence path traversal rejected",
+        [sys.executable, str(EVIDENCE_VALIDATOR), str(traversal)],
+        1,
+        output_must_contain="escapes manifest directory",
+    )
+
+
 def qualify_live_gate(tmp: Path) -> None:
     work, expected_head = build_live_gate_fixture(tmp / "live-gate")
 
@@ -284,6 +334,7 @@ def main() -> None:
         try:
             qualify_task_packet_validation(tmp)
             qualify_result_packet_validation(tmp)
+            qualify_evidence_manifest_validation(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
         except QualificationFailure as exc:
