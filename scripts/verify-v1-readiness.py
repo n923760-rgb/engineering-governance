@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed readiness gate for the engineering-governance v1 release candidate."""
+"""Fail-closed readiness gate for the engineering-governance v1 baseline."""
 from __future__ import annotations
 
 import re
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_RE = re.compile(r"^1\.0\.0-rc\.[1-9][0-9]*$")
+VERSION_RE = re.compile(r"^1[.]0[.]0(?:-rc[.][1-9][0-9]*)?$")
 
 REQUIRED_CAPABILITIES = {
     "master governance": "MASTER_GOVERNANCE.md",
@@ -71,7 +71,7 @@ def fail(message: str) -> None:
 def main() -> None:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     if not VERSION_RE.fullmatch(version):
-        fail(f"VERSION must be a v1 release candidate (1.0.0-rc.N), got {version!r}")
+        fail(f"VERSION must be 1.0.0 or a v1 release candidate (1.0.0-rc.N), got {version!r}")
 
     missing = [
         f"{name} ({rel})"
@@ -96,7 +96,7 @@ def main() -> None:
             fail(f"Governance CI missing required step: {marker}")
 
     if (ROOT / ".github" / "workflows" / "runner-diagnostic.yml").exists():
-        fail("temporary runner diagnostic workflow must not exist in release candidate")
+        fail("temporary runner diagnostic workflow must not exist in the v1 baseline")
 
     bootstrap_help = subprocess.run(
         [sys.executable, "scripts/bootstrap-project.py", "--help"],
