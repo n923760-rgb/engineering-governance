@@ -1,7 +1,7 @@
 # Project Governance Profile
 
 Status: DRAFT
-Governance baseline: MASTER_GOVERNANCE.md
+Governance baseline: Global Engineering Governance Reference
 
 ## Project Identity
 
@@ -19,6 +19,8 @@ SUBSYSTEM CONTRACTS:
 ## Engineering Systems
 
 CI SYSTEM:
+BRANCH PROTECTION / RULESET:
+SECRET SCANNING / SECURITY BASELINE:
 EXECUTION ENVIRONMENT:
 CONTROLLER:
 EXECUTOR:
@@ -33,6 +35,7 @@ TEST STRATEGY:
 EVIDENCE LOCATION:
 REPORT LOCATION:
 BACKUP STRATEGY:
+RESTORE QUALIFICATION:
 
 ## Project-Specific Stop Conditions
 

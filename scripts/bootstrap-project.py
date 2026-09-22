@@ -85,11 +85,16 @@ PROTECTED ACTIONS:
 - merge
 - release
 - tag
+- signing
 - production_deploy
+- destructive_database_migration
+- production_credential_rotation
+- server_destruction_or_reinstall
+- repository_deletion
 - force_push
 - history_rewrite
-- destructive_infrastructure
-- credential_rotation
+- permanent_artifact_deletion
+- billing_or_cloud_resource_destruction
 
 ## Verification and Evidence
 
@@ -130,11 +135,16 @@ def project_profile_json(project_name: str, repository: str, branch: str, source
             "merge",
             "release",
             "tag",
+            "signing",
             "production_deploy",
+            "destructive_database_migration",
+            "production_credential_rotation",
+            "server_destruction_or_reinstall",
+            "repository_deletion",
             "force_push",
             "history_rewrite",
-            "destructive_infrastructure",
-            "credential_rotation",
+            "permanent_artifact_deletion",
+            "billing_or_cloud_resource_destruction",
         ],
         "test_strategy": "VERIFY_FROM_CURRENT_PROJECT",
         "evidence_location": ".evidence/",
@@ -322,12 +332,15 @@ Before marking adoption QUALIFIED:
 - [ ] Fetch and record the current official HEAD in each Task Packet, not here.
 - [ ] Inspect current repository instruction files.
 - [ ] Inspect CI workflows and required checks.
+- [ ] Inspect branch protection/rulesets.
+- [ ] Inspect secret scanning/security baseline.
 - [ ] Inspect deployment/runtime environments.
 - [ ] Define project-specific tests and evidence requirements.
 - [ ] Define protected paths and project-specific stop conditions.
 - [ ] Confirm secrets mechanism and backup/restore strategy.
 - [ ] Run a read-only governance task end to end.
 - [ ] Run one isolated implementation task end to end.
+- [ ] Run controlled governance stop-condition fixtures.
 - [ ] Confirm resulting evidence is attributable to the exact tested SHA.
 
 Only then change this file's status to QUALIFIED.

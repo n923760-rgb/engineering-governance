@@ -53,10 +53,8 @@ Those remain project-level facts and must be derived from the live target projec
 
 ## Stable Release Boundary
 
-The stable source may be merged as `1.0.0` only after its PR passes Governance CI.
+`v1.0.0` has been formally published from its qualified exact `main` SHA.
 
-The formal `v1.0.0` tag and GitHub Release must then:
-- target the exact resulting `main` SHA;
-- be created only after Governance CI succeeds on that SHA;
-- use the prepared release notes;
-- never point to the pre-merge PR SHA or synthetic merge ref.
+The published tag and GitHub Release are immutable release evidence. They must not be moved to newer commits.
+
+Post-release changes on `main` are unreleased until a future version is explicitly authorized, qualified, and published.

@@ -7,10 +7,16 @@ Repository:
 Official branch:
 Default development base:
 
+## Branch Protection / Ruleset
+Required protection:
+Current verified protection:
+Required checks:
+Direct official-branch writes allowed: [YES/NO — VERIFY]
+
 ## Git Safety
 - Never mutate source before Live Gate verification.
 - Never force-push or rewrite published history unless explicitly authorized as a separate exceptional task.
-- Never push directly to a protected official branch unless explicitly authorized.
+- Never push directly to the official branch when project policy requires PR-based change control. Technical ability to bypass protection is not authorization.
 - Prefer one confirmed problem = one branch = one pull request.
 - Prefer isolated worktrees for concurrent work.
 
