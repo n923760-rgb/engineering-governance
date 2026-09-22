@@ -38,6 +38,8 @@ REQUIRED_PATHS = [
     "docs/EVIDENCE_POLICY.md",
     "docs/SECRETS_POLICY.md",
     "docs/STOP_CONDITIONS.md",
+    "qualification/README.md",
+    "qualification/run-qualification.py",
 ]
 
 
@@ -86,7 +88,7 @@ def check_shell() -> None:
 
 
 def check_python() -> None:
-    scripts = sorted((ROOT / "scripts").glob("*.py"))
+    scripts = sorted((ROOT / "scripts").glob("*.py")) + sorted((ROOT / "qualification").glob("*.py"))
     if not scripts:
         fail("no Python scripts found")
     for path in scripts:
