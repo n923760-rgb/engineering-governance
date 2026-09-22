@@ -1,0 +1,8 @@
+# Local execution evidence may contain environment-specific details.
+# Keep these out of the governance template repository unless deliberately accepted.
+.evidence/
+.reports/
+.tmp/
+__pycache__/
+*.pyc
+.DS_Store

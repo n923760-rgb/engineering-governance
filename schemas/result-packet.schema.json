@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Engineering Result Packet",
+  "type": "object",
+  "required": ["task_id", "task_type", "executor", "execution_environment", "repository", "official_branch", "verified_remote_official_head", "exact_tested_head", "authorized_actions", "actions_actually_performed", "validation", "facts", "inferences", "assumptions", "residual_risks", "recommended_next_action"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string", "minLength": 1},
+    "executor": {"type": "string", "minLength": 1},
+    "execution_environment": {"type": "string", "minLength": 1},
+    "repository": {"type": "string", "minLength": 1},
+    "official_branch": {"type": "string", "minLength": 1},
+    "verified_remote_official_head": {"type": "string", "minLength": 7},
+    "exact_tested_head": {"type": "string", "minLength": 7},
+    "authorized_actions": {},
+    "actions_actually_performed": {},
+    "validation": {"type": "array"},
+    "facts": {"type": "array"},
+    "inferences": {"type": "array"},
+    "assumptions": {"type": "array"},
+    "residual_risks": {"type": "array"},
+    "recommended_next_action": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

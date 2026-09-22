@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Governance Profile",
+  "type": "object",
+  "required": ["project_name", "repository", "official_branch", "controller", "executor", "protected_actions", "test_strategy", "evidence_location", "report_location"],
+  "properties": {
+    "project_name": {"type": "string", "minLength": 1},
+    "repository": {"type": "string", "minLength": 1},
+    "official_branch": {"type": "string", "minLength": 1},
+    "repository_instruction_file": {"type": ["string", "null"]},
+    "project_instruction_file": {"type": ["string", "null"]},
+    "engineering_guide": {"type": ["string", "null"]},
+    "subsystem_contracts": {"type": "array", "items": {"type": "string"}},
+    "ci_system": {"type": ["string", "null"]},
+    "execution_environment": {"type": ["string", "null"]},
+    "controller": {"type": "string", "minLength": 1},
+    "executor": {"type": "string", "minLength": 1},
+    "protected_actions": {"type": "array", "items": {"type": "string"}},
+    "test_strategy": {"type": "string", "minLength": 1},
+    "evidence_location": {"type": "string", "minLength": 1},
+    "report_location": {"type": "string", "minLength": 1},
+    "backup_strategy": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}
