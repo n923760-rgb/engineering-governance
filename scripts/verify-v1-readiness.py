@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_RE = re.compile(r"^1\.0\.0-rc\.[1-9][0-9]*$")
+VERSION_RE = re.compile(r"^1[.]0[.]0(?:-rc[.][1-9][0-9]*)?$")
 
 REQUIRED_CAPABILITIES = {
     "master governance": "MASTER_GOVERNANCE.md",
