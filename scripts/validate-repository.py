@@ -82,8 +82,8 @@ def check_required_paths() -> None:
 def check_version() -> None:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     if not re.fullmatch(
-        r"(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
-        r"(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?",
+        r"(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)"
+        r"(?:-[0-9A-Za-z.-]+)?(?:[+][0-9A-Za-z.-]+)?",
         version,
     ):
         fail(f"VERSION is not valid semantic versioning: {version!r}")
