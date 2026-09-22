@@ -12,6 +12,18 @@ Act as the execution engineer for this task.
 ## AUTHORITY
 [Exactly what may be read, modified, committed, pushed, triggered, or changed.]
 
+## MACHINE-READABLE ACTION AUTHORITY
+Requested actions:
+Authorized actions:
+Protected actions:
+Protected action authorizations:
+
+Rules:
+- every requested action must be present in Authorized actions;
+- protected actions may appear in Authorized actions only when the current owner explicitly authorized them;
+- each authorized protected action must record source = CURRENT_OWNER_INSTRUCTION and a non-empty reference;
+- do not infer protected authorization from implementation authority.
+
 ## REPOSITORY
 [Repository]
 

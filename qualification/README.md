@@ -2,18 +2,32 @@
 
 This directory contains adversarial tests for the governance safety gates.
 
-The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source or claiming success.
+The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source, exceeding authority, or claiming unsupported success.
 
-## Covered in this phase
+## Covered
 
-- valid Task Packet accepted;
-- missing required Task Packet field rejected;
-- malformed expected SHA rejected;
+Repository live-state safety:
 - clean expected repository state accepted;
 - repository identity mismatch rejected;
 - wrong branch rejected;
 - dirty worktree rejected;
-- unexpected official remote HEAD rejected;
+- unexpected official remote HEAD rejected.
+
+Task Packet authority:
+- valid Task Packet accepted;
+- missing required Task Packet field rejected;
+- malformed expected SHA rejected;
+- requested action outside authority rejected;
+- protected action without explicit owner authorization rejected;
+- protected action with explicit current-owner authorization accepted.
+
+Result Packet evidence:
+- valid Result Packet accepted;
+- PASS without attributable evidence rejected;
+- NOT RUN without a reason rejected;
+- action performed outside task authority rejected.
+
+Secret hygiene:
 - clean tracked text passes the baseline secret scanner;
 - a synthetic secret-like value is rejected.
 
@@ -28,7 +42,7 @@ python qualification/run-qualification.py
 A successful run ends with:
 
 ```text
-PASS: governance stop-condition qualification suite completed
+PASS: governance qualification suite completed
 ```
 
-This phase does not yet qualify protected-action authorization or Result Packet evidence completeness; those are separate governance controls and should be added as bounded follow-up tasks.
+Further bounded qualification may add conflicting active PR-state enforcement and environment/resource-instability simulation.
