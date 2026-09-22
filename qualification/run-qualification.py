@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Adversarial qualification tests for governance safety, authority, and evidence."""
+"""Adversarial qualification tests for governance safety, authority, evidence, and environment gates."""
 from __future__ import annotations
 
 import json
@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
+ENVIRONMENT_GATE = ROOT / "scripts" / "verify-environment-capacity.py"
 TASK_VALIDATOR = ROOT / "scripts" / "validate-task-packet.py"
 RESULT_VALIDATOR = ROOT / "scripts" / "validate-result-packet.py"
 EVIDENCE_VALIDATOR = ROOT / "scripts" / "validate-evidence-manifest.py"
@@ -246,6 +247,47 @@ def qualify_evidence_manifest_validation(tmp: Path) -> None:
     )
 
 
+def qualify_environment_gate(tmp: Path) -> None:
+    env_dir = tmp / "environment"
+    env_dir.mkdir()
+
+    expect_code(
+        "healthy environment capacity accepted",
+        [
+            sys.executable,
+            str(ENVIRONMENT_GATE),
+            "--path",
+            str(env_dir),
+            "--min-free-bytes",
+            "1",
+        ],
+        0,
+        output_must_contain="ENVIRONMENT_GATE=PASS",
+    )
+
+    missing = tmp / "missing-environment"
+    expect_code(
+        "missing environment path rejected",
+        [sys.executable, str(ENVIRONMENT_GATE), "--path", str(missing)],
+        30,
+        output_must_contain="environment path is unavailable",
+    )
+
+    expect_code(
+        "insufficient disk capacity stops execution",
+        [
+            sys.executable,
+            str(ENVIRONMENT_GATE),
+            "--path",
+            str(env_dir),
+            "--min-free-bytes",
+            str(2**63 - 1),
+        ],
+        31,
+        output_must_contain="insufficient free disk",
+    )
+
+
 def qualify_live_gate(tmp: Path) -> None:
     work, expected_head = build_live_gate_fixture(tmp / "live-gate")
 
@@ -335,6 +377,7 @@ def main() -> None:
             qualify_task_packet_validation(tmp)
             qualify_result_packet_validation(tmp)
             qualify_evidence_manifest_validation(tmp)
+            qualify_environment_gate(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
         except QualificationFailure as exc:

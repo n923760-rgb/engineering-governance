@@ -30,7 +30,21 @@ Secrets mechanism:
 CPU limits:
 Memory limits:
 Storage limits:
+Minimum free disk before mutation:
 Heavy-workload lock:
+
+## Preflight Gate
+Before mutation, run the environment preflight appropriate to this environment.
+
+Baseline command:
+
+```bash
+python scripts/verify-environment-capacity.py --path <working-path> --min-free-bytes <required-bytes>
+```
+
+For strictly read-only work, a project may explicitly permit `--skip-write-test`.
+
+A failed capacity or write check is a STOP condition, not permission to continue partially.
 
 ## Retention
 Evidence:

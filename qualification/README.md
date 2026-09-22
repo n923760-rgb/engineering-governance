@@ -2,7 +2,7 @@
 
 This directory contains adversarial tests for the governance safety gates.
 
-The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source, exceeding authority, accepting corrupted evidence, or claiming unsupported success.
+The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source, exceeding authority, accepting corrupted evidence, continuing in an unhealthy environment, or claiming unsupported success.
 
 ## Covered
 
@@ -33,11 +33,16 @@ Evidence manifest integrity:
 - missing artifact rejected;
 - parent-directory traversal rejected.
 
+Environment / resource gate:
+- healthy writable environment accepted;
+- missing working path rejected;
+- insufficient free disk rejected before mutation.
+
 Secret hygiene:
 - clean tracked text passes the baseline secret scanner;
 - a synthetic secret-like value is rejected.
 
-All Git repositories and secret-like values used by the suite are temporary fixtures. No production repository, credential, or infrastructure is modified.
+All Git repositories, evidence artifacts, and secret-like values used by the suite are temporary or synthetic fixtures. No production repository, credential, or infrastructure is modified.
 
 ## Run
 
@@ -51,4 +56,4 @@ A successful run ends with:
 PASS: governance qualification suite completed
 ```
 
-Further bounded qualification may add conflicting active PR-state enforcement and environment/resource-instability simulation.
+Further bounded qualification may add conflicting active PR-state enforcement.
