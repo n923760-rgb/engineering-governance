@@ -30,6 +30,7 @@ The repository or project currently being worked on remains the source of truth.
 - `docs/` — concise role, policy, and project-adoption references.
 - `examples/` — example project profile, task/result flow, and evidence manifest.
 - `qualification/` — adversarial tests that prove stop conditions fail closed.
+- `docs/V1_READINESS.md` — formal scope of the qualified v1 release candidate.
 
 ## First adoption workflow
 
@@ -47,4 +48,6 @@ The generated `governance/` directory is deliberately marked **DRAFT — LIVE VE
 
 ## Version
 
-Initial implementation baseline: `0.1.0`.
+Current qualified candidate: `1.0.0-rc.1`.
+
+A formal `v1.0.0` tag/GitHub Release is intentionally separate from candidate qualification and requires explicit release authorization.

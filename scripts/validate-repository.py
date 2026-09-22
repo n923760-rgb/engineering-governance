@@ -15,6 +15,9 @@ REQUIRED_PATHS = [
     "MASTER_GOVERNANCE.md",
     "README.md",
     "VERSION",
+    "CHANGELOG.md",
+    "docs/V1_READINESS.md",
+    "scripts/verify-v1-readiness.py",
     "templates/PROJECT_PROFILE.md",
     "templates/TASK_PACKET.md",
     "templates/RESULT_PACKET.md",
@@ -78,8 +81,12 @@ def check_required_paths() -> None:
 
 def check_version() -> None:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-    if not re.fullmatch(r"\d+\.\d+\.\d+", version):
-        fail(f"VERSION is not semantic x.y.z: {version!r}")
+    if not re.fullmatch(
+        r"(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
+        r"(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?",
+        version,
+    ):
+        fail(f"VERSION is not valid semantic versioning: {version!r}")
 
 
 def check_json() -> None:
