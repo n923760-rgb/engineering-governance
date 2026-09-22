@@ -1,10 +1,29 @@
-# Adopting Engineering Governance in Any Project
+# Adopting Global Engineering Governance in Any Project
 
-The governance repository is a reusable control system. A target project must still derive its own facts from its current production source and environment.
+This repository is a reusable control system. A target project must derive its own facts from its current source and environment.
 
-## 1. Bootstrap
+## 1. Start Read-Only
 
-From a trusted checkout of this governance repository:
+Before creating governance files or changing source, inspect:
+- repository identity;
+- official branch;
+- current official remote HEAD;
+- repository/project instructions;
+- relevant subsystem contracts;
+- open/conflicting PRs;
+- CI and required checks;
+- branch protection/rulesets;
+- secret scanning/security baseline;
+- execution/runtime environment;
+- test strategy;
+- evidence/report locations;
+- backup/restore policy;
+- protected paths;
+- project-specific stop conditions.
+
+If any expected identity or SHA differs from live truth, stop mutation and investigate first.
+
+## 2. Bootstrap
 
 ```bash
 python scripts/bootstrap-project.py \
@@ -14,55 +33,36 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
-The command creates only a `governance/` directory in the target project. It refuses to overwrite any generated governance file that already exists.
+The command creates only a `governance/` directory and refuses to overwrite generated governance files that already exist.
 
-## 2. Live Qualification
+## 3. Replace Placeholders from Live Facts
 
-Do not treat generated values as proof.
+Generated values are scaffolding, not proof. Keep live SHAs in Task Packets and Result Packets, not in long-lived project profiles.
 
-Verify from the target project's current state:
-- repository identity;
-- official branch;
-- remote official HEAD;
-- repository instructions;
-- CI system and required checks;
-- runtime/deployment environment;
-- test strategy;
-- evidence paths;
-- secret handling;
-- backup/restore strategy;
-- protected paths;
-- project-specific stop conditions.
+Never copy another project's repository name, current SHA, server identity, credentials, paths, CI identities, infrastructure details, test counts, production topology, or historical product decisions.
 
-Keep live SHAs in Task Packets and Result Packets, not in long-lived project profiles.
+## 4. Qualify the Governance Process
 
-## 3. First Governed Task
+Before normal production engineering, prove safe stopping for representative failures:
+- wrong expected SHA;
+- dirty worktree;
+- unauthorized protected action;
+- conflicting PR;
+- missing evidence;
+- resource/environment failure;
+- secret exposure attempt;
+- scope expansion.
 
-Start with a READ-ONLY DIAGNOSIS:
-- issue a Task Packet;
-- run Live Gate;
-- inspect only;
-- produce a Result Packet;
-- verify evidence attribution.
+A safe stop is a successful governance outcome.
 
-Then perform one small isolated IMPLEMENTATION task:
-- one concern;
-- one branch/worktree;
-- smallest deterministic test first;
-- CI verification;
-- controlled merge only when authorized.
+## 5. First Governed Tasks
 
-## 4. Adoption Qualification
+First run one READ-ONLY DIAGNOSIS end to end. Then run one small isolated IMPLEMENTATION task with exact-source validation.
 
-Only mark `governance/ADOPTION_STATUS.md` as QUALIFIED after both workflows succeed and the evidence points to the exact tested source.
+Merge only when explicitly authorized.
 
-## Safety Properties
+## 6. Adoption Qualification
 
-The bootstrapper intentionally does not:
-- copy credentials;
-- copy environment paths;
-- copy historical SHAs;
-- copy project-specific contracts from another repository;
-- infer production topology;
-- overwrite existing governance files;
-- declare a project qualified automatically.
+Mark `governance/ADOPTION_STATUS.md` as `QUALIFIED` only when project identity, authority, CI/tests, environment, secrets, protection state, qualification fixtures, and attributable evidence have been proven.
+
+Governance qualification does not mean the product itself is production-qualified.
