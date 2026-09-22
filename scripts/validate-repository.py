@@ -37,6 +37,7 @@ REQUIRED_PATHS = [
     "examples/artifacts/evidence-fixture.txt",
     "scripts/verify-repository-state.sh",
     "scripts/verify-clean-tree.sh",
+    "scripts/verify-environment-capacity.py",
     "scripts/collect-git-evidence.sh",
     "scripts/validate-task-packet.py",
     "scripts/validate-result-packet.py",
@@ -139,6 +140,9 @@ def check_template_contracts() -> None:
         ],
         "templates/EVIDENCE_MANIFEST.md": [
             "SHA-256", "size in bytes", "sensitive-data flag",
+        ],
+        "templates/ENGINEERING_ENVIRONMENT_CONTRACT.md": [
+            "## Preflight Gate", "Minimum free disk before mutation:",
         ],
         "templates/PROJECT_PROFILE.md": [
             "PROJECT NAME:", "REPOSITORY:", "OFFICIAL BRANCH:",

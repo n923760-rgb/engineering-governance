@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Verify execution environment capacity
+        run: python scripts/verify-environment-capacity.py --path . --min-free-bytes 1048576
+
       - name: Validate repository contracts
         run: python scripts/validate-repository.py
 
