@@ -2,7 +2,7 @@
 
 This directory contains adversarial tests for the governance safety gates.
 
-The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source, exceeding authority, or claiming unsupported success.
+The suite deliberately creates disposable, synthetic bad states and verifies that the tooling stops safely rather than mutating source, exceeding authority, accepting corrupted evidence, or claiming unsupported success.
 
 ## Covered
 
@@ -26,6 +26,12 @@ Result Packet evidence:
 - PASS without attributable evidence rejected;
 - NOT RUN without a reason rejected;
 - action performed outside task authority rejected.
+
+Evidence manifest integrity:
+- valid manifest and artifact accepted;
+- SHA-256 mismatch rejected;
+- missing artifact rejected;
+- parent-directory traversal rejected.
 
 Secret hygiene:
 - clean tracked text passes the baseline secret scanner;

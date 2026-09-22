@@ -18,6 +18,7 @@ REQUIRED_PATHS = [
     "templates/PROJECT_PROFILE.md",
     "templates/TASK_PACKET.md",
     "templates/RESULT_PACKET.md",
+    "templates/EVIDENCE_MANIFEST.md",
     "templates/REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
     "templates/ENGINEERING_ENVIRONMENT_CONTRACT.md",
     "templates/SUBSYSTEM_CONTRACT.md",
@@ -29,13 +30,17 @@ REQUIRED_PATHS = [
     "schemas/project-profile.schema.json",
     "schemas/task-packet.schema.json",
     "schemas/result-packet.schema.json",
+    "schemas/evidence-manifest.schema.json",
     "examples/task-packet.example.json",
     "examples/result-packet.example.json",
+    "examples/evidence-manifest.example.json",
+    "examples/artifacts/evidence-fixture.txt",
     "scripts/verify-repository-state.sh",
     "scripts/verify-clean-tree.sh",
     "scripts/collect-git-evidence.sh",
     "scripts/validate-task-packet.py",
     "scripts/validate-result-packet.py",
+    "scripts/validate-evidence-manifest.py",
     "docs/AUTHORITY_MODEL.md",
     "docs/CONTROLLER_EXECUTOR_MODEL.md",
     "docs/EVIDENCE_POLICY.md",
@@ -104,6 +109,7 @@ def check_python() -> None:
 def check_packet_examples() -> None:
     run([sys.executable, "scripts/validate-task-packet.py", "examples/task-packet.example.json"])
     run([sys.executable, "scripts/validate-result-packet.py", "examples/result-packet.example.json"])
+    run([sys.executable, "scripts/validate-evidence-manifest.py", "examples/evidence-manifest.example.json"])
 
 
 def check_master_integrity() -> None:
@@ -130,6 +136,9 @@ def check_template_contracts() -> None:
         "templates/RESULT_PACKET.md": [
             "## Repository Identity", "## Validation Actually Run",
             "### Facts", "### Inferences", "### Assumptions", "## Residual Risks",
+        ],
+        "templates/EVIDENCE_MANIFEST.md": [
+            "SHA-256", "size in bytes", "sensitive-data flag",
         ],
         "templates/PROJECT_PROFILE.md": [
             "PROJECT NAME:", "REPOSITORY:", "OFFICIAL BRANCH:",

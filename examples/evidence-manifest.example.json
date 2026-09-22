@@ -1,0 +1,15 @@
+{
+  "task_id": "EXAMPLE-001",
+  "source_sha": "89abcdef0123456789abcdef0123456789abcdef",
+  "execution_environment": "example-development-environment",
+  "timestamp": "2026-09-22T11:00:00+00:00",
+  "artifacts": [
+    {
+      "path": "artifacts/evidence-fixture.txt",
+      "sha256": "3c3f1412ed62dd76f8f7342eb7b50986ba5ec1ca6d1c212bd2506314b43ba613",
+      "size": 31,
+      "sensitive_data": false,
+      "kind": "qualification-fixture"
+    }
+  ]
+}
