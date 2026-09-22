@@ -1,0 +1,41 @@
+name: Governance CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: governance-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate governance system
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate repository contracts
+        run: python scripts/validate-repository.py
+
+      - name: Scan tracked text for baseline secret patterns
+        run: python scripts/scan-secrets.py
+
+      - name: Record source identity
+        run: |
+          printf 'tested_sha=%s\n' "$(git rev-parse HEAD)"
+          printf 'branch_or_ref=%s\n' "${GITHUB_REF}"
+          git status --short
