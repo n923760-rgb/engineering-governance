@@ -1,0 +1,18 @@
+{
+  "title": "Correct one confirmed defect",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Inspect and modify only the files required for the stated defect; local validation allowed; no merge or release.",
+  "repository": "owner/example-project",
+  "official_branch": "main",
+  "expected_official_head": "0123456789abcdef0123456789abcdef01234567",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "scope": "One confirmed defect only.",
+  "out_of_scope": "Neighboring cleanup, redesign, deployment, release, history rewrite.",
+  "task": "Implement the smallest correction that restores the violated contract.",
+  "validation": "Run the smallest deterministic test that proves the contract, then relevant regressions.",
+  "artifacts": "Task result and relevant test evidence.",
+  "stop_conditions": "Stop on live-state mismatch, authority ambiguity, secret exposure, or scope expansion.",
+  "report_path": ".reports/example-task.md",
+  "success_criteria": "The confirmed defect is corrected on the exact tested SHA with attributable evidence."
+}

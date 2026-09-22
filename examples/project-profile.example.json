@@ -1,0 +1,18 @@
+{
+  "project_name": "Example Project",
+  "repository": "owner/example-project",
+  "official_branch": "main",
+  "repository_instruction_file": "AGENTS.md",
+  "project_instruction_file": "docs/PROJECT_INSTRUCTIONS.md",
+  "engineering_guide": "docs/ENGINEERING_GUIDE.md",
+  "subsystem_contracts": [],
+  "ci_system": "GitHub Actions",
+  "execution_environment": "Document the real current environment before use",
+  "controller": "Engineering Controller",
+  "executor": "Engineering Executor",
+  "protected_actions": ["merge", "release", "tag", "production deployment", "force push"],
+  "test_strategy": "Smallest deterministic contract test, then relevant regressions",
+  "evidence_location": ".evidence/",
+  "report_location": ".reports/",
+  "backup_strategy": "Define per project"
+}
