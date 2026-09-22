@@ -997,7 +997,8 @@ Phase 4 — AI Executor Qualification
 Prove that the executor:
 
 - obeys scope;
-- stops on mismatches;- cannot silently widen authority;
+- stops on mismatches;
+- cannot silently widen authority;
 - reports commands honestly;
 - protects secrets.
 
