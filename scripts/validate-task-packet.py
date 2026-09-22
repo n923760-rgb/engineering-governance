@@ -65,6 +65,19 @@ def main() -> None:
     if data["task_type"] not in TASK_TYPES:
         fail(f"unsupported task_type: {data['task_type']}")
 
+    existing_pr = data.get("existing_pr")
+    expected_pr_head = data.get("expected_pr_head")
+    expected_pr_base = data.get("expected_pr_base")
+    if existing_pr is not None:
+        if not isinstance(existing_pr, int) or isinstance(existing_pr, bool) or existing_pr < 1:
+            fail("existing_pr must be a positive integer or null")
+        if not isinstance(expected_pr_head, str) or not re.fullmatch(r"[0-9a-fA-F]{7,64}", expected_pr_head):
+            fail("expected_pr_head must look like a Git SHA when existing_pr is set")
+        if not isinstance(expected_pr_base, str) or not expected_pr_base.strip():
+            fail("expected_pr_base is required when existing_pr is set")
+    elif expected_pr_head is not None or expected_pr_base is not None:
+        fail("expected_pr_head/base must be null when existing_pr is null")
+
     head = str(data["expected_official_head"])
     if not re.fullmatch(r"[0-9a-fA-F]{7,64}", head):
         fail("expected_official_head must look like a Git SHA")

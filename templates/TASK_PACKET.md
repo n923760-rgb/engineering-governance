@@ -37,7 +37,10 @@ Rules:
 [When applicable, otherwise NONE]
 
 ## EXPECTED PR HEAD
-[When applicable, otherwise NONE]
+[Exact PR head SHA when applicable, otherwise NONE]
+
+## EXPECTED PR BASE
+[Expected PR base branch when applicable, otherwise NONE]
 
 ## SCOPE
 [Exact concern being addressed]

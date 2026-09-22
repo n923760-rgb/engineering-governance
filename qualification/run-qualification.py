@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
 ENVIRONMENT_GATE = ROOT / "scripts" / "verify-environment-capacity.py"
 BOOTSTRAP = ROOT / "scripts" / "bootstrap-project.py"
+PR_STATE_GATE = ROOT / "scripts" / "verify-github-pr-state.py"
 TASK_VALIDATOR = ROOT / "scripts" / "validate-task-packet.py"
 RESULT_VALIDATOR = ROOT / "scripts" / "validate-result-packet.py"
 EVIDENCE_VALIDATOR = ROOT / "scripts" / "validate-evidence-manifest.py"
@@ -369,6 +370,144 @@ def qualify_project_bootstrap(tmp: Path) -> None:
         output_must_contain="repository must use owner/name form",
     )
 
+
+def qualify_pr_state_gate(tmp: Path) -> None:
+    pr_dir = tmp / "pr-state"
+    pr_dir.mkdir()
+
+    valid_sha = "1234567890abcdef1234567890abcdef12345678"
+    valid = {
+        "number": 42,
+        "state": "open",
+        "head": {"sha": valid_sha, "ref": "feature/example"},
+        "base": {
+            "ref": "main",
+            "repo": {"full_name": "owner/project"},
+        },
+    }
+    valid_path = pr_dir / "valid-pr.json"
+    write_json(valid_path, valid)
+
+    expect_code(
+        "matching PR state accepted",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--pr-number",
+            "42",
+            "--expected-head",
+            valid_sha,
+            "--expected-base",
+            "main",
+            "--fixture",
+            str(valid_path),
+        ],
+        0,
+        output_must_contain="PR_STATE_GATE=PASS",
+    )
+
+    expect_code(
+        "stale PR head rejected",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--pr-number",
+            "42",
+            "--expected-head",
+            "0" * 40,
+            "--expected-base",
+            "main",
+            "--fixture",
+            str(valid_path),
+        ],
+        42,
+        output_must_contain="PR head mismatch",
+    )
+
+    closed = dict(valid)
+    closed["state"] = "closed"
+    closed_path = pr_dir / "closed-pr.json"
+    write_json(closed_path, closed)
+    expect_code(
+        "unexpected closed PR rejected",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--pr-number",
+            "42",
+            "--expected-head",
+            valid_sha,
+            "--expected-base",
+            "main",
+            "--fixture",
+            str(closed_path),
+        ],
+        41,
+        output_must_contain="PR state mismatch",
+    )
+
+    expect_code(
+        "wrong PR base rejected",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--pr-number",
+            "42",
+            "--expected-head",
+            valid_sha,
+            "--expected-base",
+            "release",
+            "--fixture",
+            str(valid_path),
+        ],
+        43,
+        output_must_contain="PR base mismatch",
+    )
+
+    empty_list = pr_dir / "no-open-pr.json"
+    write_json(empty_list, [])
+    expect_code(
+        "no open PR for work branch accepted",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--expect-no-open-pr-for-head",
+            "feature/example",
+            "--fixture",
+            str(empty_list),
+        ],
+        0,
+        output_must_contain="open_prs=0",
+    )
+
+    conflicting_list = pr_dir / "conflicting-open-pr.json"
+    write_json(conflicting_list, [valid])
+    expect_code(
+        "conflicting open PR for work branch rejected",
+        [
+            sys.executable,
+            str(PR_STATE_GATE),
+            "--repository",
+            "owner/project",
+            "--expect-no-open-pr-for-head",
+            "feature/example",
+            "--fixture",
+            str(conflicting_list),
+        ],
+        45,
+        output_must_contain="conflicting open PR exists",
+    )
+
 def qualify_live_gate(tmp: Path) -> None:
     work, expected_head = build_live_gate_fixture(tmp / "live-gate")
 
@@ -460,6 +599,7 @@ def main() -> None:
             qualify_evidence_manifest_validation(tmp)
             qualify_environment_gate(tmp)
             qualify_project_bootstrap(tmp)
+            qualify_pr_state_gate(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
         except QualificationFailure as exc:

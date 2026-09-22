@@ -8,7 +8,8 @@
 - [ ] Remote official HEAD is verified.
 - [ ] Local branch and local HEAD are verified.
 - [ ] Working tree state is known.
-- [ ] Existing PR state is verified when applicable.
+- [ ] Existing PR state, head SHA, and base branch are verified when applicable.
+- [ ] If no PR is expected for the work branch, no conflicting open PR exists.
 - [ ] Relevant CI state is known when applicable.
 - [ ] Scope is atomic.
 - [ ] Out-of-scope systems are named.

@@ -45,6 +45,14 @@ Project adoption bootstrap:
 - refuses to overwrite existing governance files;
 - rejects invalid repository identities.
 
+Pull request state:
+- matching PR repository/number/state/head/base is accepted;
+- stale PR head is rejected;
+- unexpected closed PR is rejected;
+- wrong PR base is rejected;
+- no-open-PR expectation is accepted when true;
+- conflicting open PR on the work branch is rejected.
+
 Secret hygiene:
 - clean tracked text passes the baseline secret scanner;
 - a synthetic secret-like value is rejected.
@@ -63,4 +71,4 @@ A successful run ends with:
 PASS: governance qualification suite completed
 ```
 
-Further bounded qualification may add conflicting active PR-state enforcement.
+The baseline governance safety gates are now covered by deterministic qualification. Project-specific runtime contracts remain the responsibility of each adopted project.

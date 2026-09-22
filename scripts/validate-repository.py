@@ -38,6 +38,7 @@ REQUIRED_PATHS = [
     "scripts/verify-repository-state.sh",
     "scripts/verify-clean-tree.sh",
     "scripts/verify-environment-capacity.py",
+    "scripts/verify-github-pr-state.py",
     "scripts/bootstrap-project.py",
     "scripts/collect-git-evidence.sh",
     "scripts/validate-task-packet.py",
@@ -49,6 +50,7 @@ REQUIRED_PATHS = [
     "docs/SECRETS_POLICY.md",
     "docs/STOP_CONDITIONS.md",
     "docs/ADOPTION_GUIDE.md",
+    "docs/PULL_REQUEST_STATE_POLICY.md",
     "qualification/README.md",
     "qualification/run-qualification.py",
 ]

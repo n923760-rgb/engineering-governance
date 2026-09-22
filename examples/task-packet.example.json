@@ -15,8 +15,28 @@
   "stop_conditions": "Stop on live-state mismatch, authority ambiguity, secret exposure, or scope expansion.",
   "report_path": ".reports/example-task.md",
   "success_criteria": "The confirmed defect is corrected on the exact tested SHA with attributable evidence.",
-  "requested_actions": ["read", "modify", "commit", "push"],
-  "authorized_actions": ["read", "modify", "commit", "push"],
-  "protected_actions": ["merge", "release", "tag", "production_deploy", "force_push", "history_rewrite", "destructive_infrastructure", "credential_rotation"],
-  "protected_action_authorizations": {}
+  "requested_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push"
+  ],
+  "protected_actions": [
+    "merge",
+    "release",
+    "tag",
+    "production_deploy",
+    "force_push",
+    "history_rewrite",
+    "destructive_infrastructure",
+    "credential_rotation"
+  ],
+  "protected_action_authorizations": {},
+  "expected_pr_base": null
 }
