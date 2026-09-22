@@ -11,13 +11,14 @@ The repository or project currently being worked on remains the source of truth.
 ## How to use this repository
 
 1. Keep `MASTER_GOVERNANCE.md` generic and stable.
-2. For each project, create a project-specific `PROJECT_GOVERNANCE_PROFILE.md` from `templates/PROJECT_PROFILE.md`.
-3. Before implementation, issue one bounded `TASK_PACKET.md`.
-4. Run the Live Gate before source mutation.
-5. Execute the task in an isolated branch/worktree.
-6. Record tests and evidence honestly.
-7. Produce a `RESULT_PACKET.md`.
-8. Review the result before any protected action such as merge, release, deployment, destructive migration, or history rewrite.
+2. For each project, run `scripts/bootstrap-project.py` to create a safe DRAFT governance starter pack.
+3. Qualify that starter pack against the target project's live source, CI, environment, and instructions.
+4. Before implementation, issue one bounded `TASK_PACKET.md`.
+5. Run the Live Gate and environment gate before source mutation.
+6. Execute the task in an isolated branch/worktree.
+7. Record tests and evidence honestly.
+8. Produce a `RESULT_PACKET.md` and Evidence Manifest where file artifacts matter.
+9. Review the result before any protected action such as merge, release, deployment, destructive migration, or history rewrite.
 
 ## Repository layout
 
@@ -26,19 +27,23 @@ The repository or project currently being worked on remains the source of truth.
 - `checklists/` — operational safety and review checklists.
 - `schemas/` — machine-readable validation schemas.
 - `scripts/` — Live Gate and packet validation helpers.
-- `docs/` — concise role and policy references.
-- `examples/` — example project profile and task/result flow.
+- `docs/` — concise role, policy, and project-adoption references.
+- `examples/` — example project profile, task/result flow, and evidence manifest.
+- `qualification/` — adversarial tests that prove stop conditions fail closed.
 
 ## First adoption workflow
 
-Copy the following into the target project or reference them from its own engineering instructions:
+Bootstrap the target project:
 
-- `templates/PROJECT_PROFILE.md`
-- `templates/REPOSITORY_ENGINEERING_INSTRUCTIONS.md`
-- `templates/ENGINEERING_ENVIRONMENT_CONTRACT.md`
-- `templates/RESOURCE_MAP.md`
+```bash
+python scripts/bootstrap-project.py \
+  --project-name "Example Project" \
+  --repository "owner/example-project" \
+  --official-branch main \
+  --destination /path/to/example-project
+```
 
-Then fill them from the target project's current live environment. Never copy repository names, SHAs, credentials, paths, CI details, or infrastructure identities from another project.
+The generated `governance/` directory is deliberately marked **DRAFT — LIVE VERIFICATION REQUIRED**. Follow `docs/ADOPTION_GUIDE.md` and fill it from the target project's current live environment. Never copy SHAs, credentials, paths, CI details, or infrastructure identities from another project.
 
 ## Version
 
