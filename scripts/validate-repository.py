@@ -53,7 +53,9 @@ def main():
     run([sys.executable,"scripts/validate-result-packet.py","examples/result-packet.example.json"])
     run([sys.executable,"scripts/validate-evidence-manifest.py","examples/evidence-manifest.example.json"])
     master=(ROOT/"MASTER_GOVERNANCE.md").read_text()
-    for phrase in ["# MASTER ENGINEERING SYSTEM","## LIVE TRUTH","## MASTER ENGINEERING ROADMAP",
+    for phrase in ["# MASTER ENGINEERING SYSTEM","## EXECUTION CAPABILITY DECLARATION",
+                   "## LIVE TRUTH","## MASTER ENGINEERING ROADMAP",
+                   "/ENGINEERING/MASTER_ROADMAP.md",
                    "## PERMANENT ENGINEERING LAB","## SOURCE VS RUNTIME EVIDENCE","## FIRST ROUND",
                    "MASTER PROJECT RE-BASELINE + ENGINEERING SYSTEM DISCOVERY",
                    "START THE READ-ONLY MASTER RE-BASELINE NOW."]:
@@ -63,17 +65,34 @@ def main():
       "templates/TASK_PACKET.md":["## TASK TYPE","## AUTHORITY","## LIVE GATE","## STOP CONDITIONS","## SUCCESS CRITERIA"],
       "templates/RESULT_PACKET.md":["## Repository Identity","## Validation Actually Run","### Facts","### Inferences","### Unknowns","## Residual Risks"],
       "templates/EVIDENCE_MANIFEST.md":["SHA-256","size in bytes","sensitive-data flag"],
-      "templates/ENGINEERING_ENVIRONMENT_CONTRACT.md":["## Preflight Gate","Minimum free disk before mutation:"],
+      "templates/ENGINEERING_ENVIRONMENT_CONTRACT.md":["## Available Execution Modes","## Preflight Gate","Minimum free disk before mutation:"],
       "templates/PROJECT_PROFILE.md":["PROJECT NAME:","REPOSITORY:","DEFAULT BRANCH:","OFFICIAL BRANCH:",
-                                      "MASTER ROADMAP:","ENGINEERING LAB CONTRACT:","PROTECTED ACTIONS:",
+                                      "MASTER ROADMAP: /ENGINEERING/MASTER_ROADMAP.md",
+                                      "VERIFIED EXECUTION CAPABILITIES:",
+                                      "ENGINEERING LAB CONTRACT:","PROTECTED ACTIONS:",
                                       "TEST STRATEGY:","ARTIFACT LOCATION:","RELEASE MODEL:"],
-      "templates/MASTER_ENGINEERING_ROADMAP.md":["## 1. Current Verified State","## 5. Release Blocker Map","## 12. Exact Immediate Next Round"],
-      "templates/MASTER_ENGINEERING_BASELINE_REPORT.md":["## A. PROJECT IDENTITY","## N. RISK / GAP LEDGER","## W. EXACT NEXT ENGINEERING ROUND"],
+      "templates/MASTER_ENGINEERING_ROADMAP.md":["Canonical target-project path: `/ENGINEERING/MASTER_ROADMAP.md`",
+                                                "## 1. Current Verified State","## 5. Release Blocker Map","## 12. Exact Immediate Next Round"],
+      "templates/MASTER_ENGINEERING_BASELINE_REPORT.md":["## A. PROJECT IDENTITY",
+                                                         "/ENGINEERING/MASTER_ROADMAP.md",
+                                                         "## N. RISK / GAP LEDGER","## W. EXACT NEXT ENGINEERING ROUND"],
+      "docs/NEW_PROJECT_ADOPTION_PROMPT.md":["UNIVERSAL PROJECT START PROMPT (v2)",
+                                             "EXECUTION ENVIRONMENT — MANDATORY",
+                                             "/ENGINEERING/MASTER_ROADMAP.md",
+                                             "Do not modify the target repository during this first round."],
     }
     for rel,anchors in expectations.items():
         content=(ROOT/rel).read_text()
         for a in anchors:
             if a not in content: fail(f"{rel} missing required anchor: {a}")
+    bootstrap=(ROOT/"scripts/bootstrap-project.py").read_text()
+    for marker in ["ENGINEERING/MASTER_ROADMAP.md","ENGINEERING/REPORTS/","ENGINEERING/EVIDENCE/","verified_execution_capabilities"]:
+        if marker not in bootstrap: fail(f"bootstrap missing v2 marker: {marker}")
+    forbidden_target_path="governance/MASTER_ENGINEERING_ROADMAP.md"
+    for rel in ["README.md","GLOBAL_REFERENCE.md","docs/QUICK_START.md","docs/ADOPTION_GUIDE.md",
+                "docs/NEW_PROJECT_ADOPTION_PROMPT.md","MASTER_GOVERNANCE.md","scripts/bootstrap-project.py"]:
+        if forbidden_target_path in (ROOT/rel).read_text():
+            fail(f"{rel} still references obsolete target roadmap path: {forbidden_target_path}")
     tracked=subprocess.run(["git","ls-files"],cwd=ROOT,text=True,capture_output=True,check=True).stdout.splitlines()
     bad=[p for p in tracked if p.startswith((".evidence/",".reports/",".tmp/")) or "__pycache__" in p or p.endswith(".pyc")]
     if bad: fail("forbidden generated/evidence files are tracked: "+", ".join(bad))
