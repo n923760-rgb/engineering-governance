@@ -1,12 +1,12 @@
 # Master Engineering Roadmap
 
-Canonical target-project path: \`/ENGINEERING/MASTER_ROADMAP.md\`
+Canonical target-project path: `/ENGINEERING/MASTER_ROADMAP.md`
 
 Status: DRAFT — LIVE VERIFICATION REQUIRED
 
 This is the **single permanent engineering roadmap** for the target project. Reconcile it with new evidence; do not create competing roadmaps.
 
-Detailed reports belong under \`/ENGINEERING/REPORTS/\`. Evidence indexes/metadata belong under \`/ENGINEERING/EVIDENCE/\`. Link to them from this roadmap instead of copying full report bodies here.
+Detailed reports belong under `/ENGINEERING/REPORTS/`. Evidence indexes/metadata belong under `/ENGINEERING/EVIDENCE/`. Link to them from this roadmap instead of copying full report bodies here.
 
 ## 1. Current Verified State
 
