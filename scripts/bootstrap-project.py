@@ -1,397 +1,213 @@
 #!/usr/bin/env python3
-"""Create a safe, project-specific governance starter pack.
-
-The bootstrapper never imports live SHAs, credentials, environment paths, or
-historical decisions from another project. Generated files are intentionally
-DRAFT until the target project's live state is verified.
-"""
+"""Create a safe starter pack for the Master Engineering System."""
 from __future__ import annotations
-
-import argparse
-import json
-import re
-import sys
+import argparse,json,re,sys
 from pathlib import Path
+REPOSITORY_RE=re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+BRANCH_RE=re.compile(r"^[A-Za-z0-9._/-]+$")
+FILES=("PROJECT_PROFILE.md","project-profile.json","REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
+       "ENGINEERING_ENVIRONMENT_CONTRACT.md","RESOURCE_MAP.md","ADOPTION_STATUS.md",
+       "MASTER_ENGINEERING_BASELINE_REPORT.md","MASTER_ENGINEERING_ROADMAP.md")
 
-REPOSITORY_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
-BRANCH_RE = re.compile(r"^[A-Za-z0-9._/-]+$")
+def fail(m,c=1): print(f"STOP: {m}",file=sys.stderr); raise SystemExit(c)
+def validate(n,r,b):
+    if not n.strip(): fail("project name must be non-empty",2)
+    if not REPOSITORY_RE.fullmatch(r): fail("repository must use owner/name form",2)
+    if not BRANCH_RE.fullmatch(b) or b.startswith("/") or b.endswith("/"): fail("invalid official branch",2)
 
-FILES = (
-    "PROJECT_PROFILE.md",
-    "project-profile.json",
-    "REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
-    "ENGINEERING_ENVIRONMENT_CONTRACT.md",
-    "RESOURCE_MAP.md",
-    "ADOPTION_STATUS.md",
-)
+def main():
+    p=argparse.ArgumentParser(description="Bootstrap the Master Engineering System for a project.")
+    p.add_argument("--project-name",required=True); p.add_argument("--repository",required=True)
+    p.add_argument("--official-branch",default="main"); p.add_argument("--destination",required=True)
+    p.add_argument("--governance-source",default="engineering-governance/MASTER_GOVERNANCE.md")
+    a=p.parse_args(); validate(a.project_name,a.repository,a.official_branch)
+    root=Path(a.destination)/"governance"
+    collisions=[root/n for n in FILES if (root/n).exists()]
+    if collisions: fail("refusing to overwrite existing governance files: "+", ".join(map(str,collisions)),20)
+    root.mkdir(parents=True,exist_ok=True)
 
-
-def fail(message: str, code: int = 1) -> None:
-    print(f"STOP: {message}", file=sys.stderr)
-    raise SystemExit(code)
-
-
-def validate_args(project_name: str, repository: str, branch: str) -> None:
-    if not project_name.strip():
-        fail("project name must be non-empty", 2)
-    if not REPOSITORY_RE.fullmatch(repository):
-        fail("repository must use owner/name form", 2)
-    if not BRANCH_RE.fullmatch(branch) or branch.startswith("/") or branch.endswith("/"):
-        fail("official branch contains invalid characters", 2)
-
-
-def target_dir(destination: Path) -> Path:
-    return destination / "governance"
-
-
-def ensure_safe_destination(destination: Path) -> Path:
-    root = target_dir(destination)
-    collisions = [root / name for name in FILES if (root / name).exists()]
-    if collisions:
-        joined = ", ".join(str(path) for path in collisions)
-        fail(f"refusing to overwrite existing governance files: {joined}", 20)
-    return root
-
-
-def project_profile_md(project_name: str, repository: str, branch: str, source: str) -> str:
-    return f"""# Project Governance Profile
+    md=f"""# Project Governance Profile
 
 Status: DRAFT — LIVE VERIFICATION REQUIRED
-Governance baseline: {source}
+Governance baseline: {a.governance_source}
 
 ## Project Identity
-
-PROJECT NAME: {project_name}
-REPOSITORY: {repository}
-OFFICIAL BRANCH: {branch}
+PROJECT NAME: {a.project_name}
+REPOSITORY: {a.repository}
+REPOSITORY URL: [VERIFY LIVE]
+DEFAULT BRANCH: [VERIFY LIVE]
+OFFICIAL BRANCH: {a.official_branch}
 
 ## Governing Instructions
-
-REPOSITORY INSTRUCTION FILE: [VERIFY OR CREATE]
-PROJECT INSTRUCTION FILE: [VERIFY OR CREATE]
-ENGINEERING GUIDE: [VERIFY OR CREATE]
-SUBSYSTEM CONTRACTS: [VERIFY CURRENT PROJECT]
+REPOSITORY AUTHORITY FILE: [VERIFY OR CREATE]
+PROJECT BASELINE: [VERIFY]
+ARCHITECTURE GUIDES: [VERIFY]
+SUBSYSTEM CONTRACTS: [VERIFY]
 
 ## Engineering Systems
-
+MASTER ROADMAP: governance/MASTER_ENGINEERING_ROADMAP.md
+MASTER BASELINE REPORT: governance/MASTER_ENGINEERING_BASELINE_REPORT.md
 CI SYSTEM: [VERIFY LIVE]
+ENGINEERING LAB CONTRACT: governance/ENGINEERING_ENVIRONMENT_CONTRACT.md
 EXECUTION ENVIRONMENT: [VERIFY LIVE]
 CONTROLLER: Engineering Controller
 EXECUTOR: Engineering Executor
 
 ## Protected Actions
-
-PROTECTED ACTIONS:
-- merge
-- release
-- tag
-- signing
-- production_deploy
-- destructive_database_migration
-- production_credential_rotation
-- server_destruction_or_reinstall
-- repository_deletion
-- force_push
-- history_rewrite
-- permanent_artifact_deletion
-- billing_or_cloud_resource_destruction
+PROTECTED ACTIONS: [DERIVE AND VERIFY]
 
 ## Verification and Evidence
-
-TEST STRATEGY: [DERIVE FROM CURRENT PROJECT]
+TEST STRATEGY: [DERIVE]
 EVIDENCE LOCATION: .evidence/
 REPORT LOCATION: .reports/
-BACKUP STRATEGY: [VERIFY LIVE]
-
-## Project-Specific Stop Conditions
-
-- Do not mutate source until repository identity, official branch, remote HEAD, local HEAD, and working-tree state are verified.
-- Add only project-specific stop conditions after inspecting current production source and environment.
+ARTIFACT LOCATION: [VERIFY]
+BACKUP / RESTORE STRATEGY: [VERIFY]
+RELEASE MODEL: [VERIFY]
+RUNTIME / DEVICE / PLATFORM MATRIX: [DERIVE]
 
 ## Notes
-
-This profile was generated as a starter only.
-Production source is the authority.
-Do not copy SHAs, credentials, environment paths, or historical decisions from another project.
+Live repository truth overrides historical context.
 """
+    profile={"status":"DRAFT_LIVE_VERIFICATION_REQUIRED","governance_source":a.governance_source,
+      "project_name":a.project_name,"repository":a.repository,"repository_url":None,"default_branch":None,
+      "official_branch":a.official_branch,"repository_authority_file":None,"project_baseline":None,
+      "architecture_guides":[],"subsystem_contracts":[],"master_roadmap":"governance/MASTER_ENGINEERING_ROADMAP.md",
+      "master_baseline_report":"governance/MASTER_ENGINEERING_BASELINE_REPORT.md","ci_system":None,
+      "engineering_lab_contract":"governance/ENGINEERING_ENVIRONMENT_CONTRACT.md","execution_environment":None,
+      "controller":"Engineering Controller","executor":"Engineering Executor",
+      "protected_actions":["merge","release","tag","signing","store_publication","production_deploy","dns_changes",
+        "destructive_database_migration","production_credential_rotation","server_or_cloud_destruction_or_reinstall",
+        "repository_deletion","force_push","history_rewrite","permanent_release_artifact_deletion",
+        "destructive_billing_or_cloud_resource_actions"],
+      "test_strategy":"VERIFY_FROM_CURRENT_PROJECT","evidence_location":".evidence/","report_location":".reports/",
+      "artifact_location":None,"backup_restore_strategy":None,"release_model":None,"runtime_device_platform_matrix":[]}
 
-
-def project_profile_json(project_name: str, repository: str, branch: str, source: str) -> str:
-    data = {
-        "status": "DRAFT_LIVE_VERIFICATION_REQUIRED",
-        "governance_source": source,
-        "project_name": project_name,
-        "repository": repository,
-        "official_branch": branch,
-        "repository_instruction_file": None,
-        "project_instruction_file": None,
-        "engineering_guide": None,
-        "subsystem_contracts": [],
-        "ci_system": None,
-        "execution_environment": None,
-        "controller": "Engineering Controller",
-        "executor": "Engineering Executor",
-        "protected_actions": [
-            "merge",
-            "release",
-            "tag",
-            "signing",
-            "production_deploy",
-            "destructive_database_migration",
-            "production_credential_rotation",
-            "server_destruction_or_reinstall",
-            "repository_deletion",
-            "force_push",
-            "history_rewrite",
-            "permanent_artifact_deletion",
-            "billing_or_cloud_resource_destruction",
-        ],
-        "test_strategy": "VERIFY_FROM_CURRENT_PROJECT",
-        "evidence_location": ".evidence/",
-        "report_location": ".reports/",
-        "backup_strategy": None,
-    }
-    return json.dumps(data, indent=2, sort_keys=True) + "\n"
-
-
-def repository_instructions(repository: str, branch: str, source: str) -> str:
-    return f"""# Repository Engineering Instructions
-
-Governance baseline: {source}
-Repository: {repository}
-Official branch: {branch}
+    repo_rules=f"""# Repository Engineering Instructions
+Governance baseline: {a.governance_source}
+Repository: {a.repository}
+Official branch: {a.official_branch}
 Status: DRAFT — VERIFY AGAINST LIVE REPOSITORY
 
-This file owns repository-specific execution rules. It may narrow authority but must not override the Master Governance or current owner instruction.
-
-## Git Safety
-
-- Never mutate source before Live Gate verification.
-- Never infer the official HEAD from this generated file; fetch it live.
-- Never force-push or rewrite published history unless explicitly authorized as a separate exceptional task.
-- Never push directly to a protected official branch unless explicitly authorized.
-- Prefer one confirmed problem = one branch = one pull request.
-- Prefer isolated worktrees for concurrent work.
-
-## Commit Policy
-
-- Commit only completed bounded work.
-- Review status, changed files, full diff, validation, accidental files, and secrets before the final task commit.
-
-## Pull Request Policy
-
-- A PR is a review surface, not a development scratchpad.
-- Open/update only when the implementation is reviewable.
-- Merge requires authority from the current owner instruction.
-
-## Testing and Evidence
-
-Required local checks: [VERIFY FROM PROJECT]
-Required CI checks: [VERIFY FROM LIVE CI]
-Required runtime evidence: [VERIFY FROM PROJECT]
-Evidence location: .evidence/
-
-## Repository-Specific Stop Conditions
-
-[ADD AFTER LIVE INSPECTION]
-
-## Protected Paths
-
-[VERIFY FROM PROJECT]
-
-## Notes
-
-Generated scaffolding must be replaced or completed using live project facts.
+- Never mutate before live-state verification.
+- Never force-push or rewrite published history without explicit exceptional authority.
+- Prefer one confirmed problem = one branch = one Pull Request.
+- Prefer isolated worktrees.
+- Merge/release/tag/signing/deployment remain protected unless explicitly authorized.
 """
-
-
-def environment_contract(project_name: str) -> str:
-    return f"""# Engineering Environment Contract
-
-Project: {project_name}
+    env=f"""# Engineering Environment Contract
+Project: {a.project_name}
 Status: DRAFT — VERIFY LIVE
 
 ## Environment Identity
-Name:
-Purpose:
-Owner:
-
 ## Toolchain
-OS:
-Git:
-Runtime(s):
-SDK(s):
-Build tools:
-Container tooling:
-
 ## Source Paths
-Canonical clone:
-Worktrees root:
-
 ## Data Separation
-Evidence root:
-Reports root:
-Artifacts root:
-Caches root:
-Temporary runs root:
-Machine configuration root:
-Secrets mechanism:
-
 ## Resource Policy
-CPU limits:
-Memory limits:
-Storage limits:
 Minimum free disk before mutation:
-Heavy-workload lock:
-
+## Runtime / Virtualization Gate
 ## Preflight Gate
-
-Before mutation, qualify the actual environment. Do not copy paths or capacity assumptions from another project.
-
 ## Retention
-Evidence:
-Reports:
-Artifacts:
-Caches:
-Temporary runs:
-
 ## Backup and Restore
-Backup target:
-Backup cadence:
-Restore test procedure:
-Last successful restore test:
-
 ## Health Checks
-
 ## Rebuild Procedure
 """
-
-
-def resource_map(project_name: str, repository: str, source: str) -> str:
-    return f"""# Project Sources / Resource Map
-
-Project: {project_name}
-Repository: {repository}
-Governance baseline: {source}
+    resource=f"""# Project Sources / Resource Map
+Project: {a.project_name}
+Repository: {a.repository}
 Status: DRAFT — VERIFY LIVE
 
-This file records authoritative locations. It is not a second rulebook.
-
 ## Source Repository
-{repository}
-
-## Project Instructions
-[VERIFY]
-
-## Repository Engineering Instructions
-governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md
-
-## Engineering Guide
-[VERIFY]
-
+{a.repository}
+## Repository Authority
+## Project Baseline
+## Master Engineering Baseline Report
+governance/MASTER_ENGINEERING_BASELINE_REPORT.md
+## Master Engineering Roadmap
+governance/MASTER_ENGINEERING_ROADMAP.md
+## Architecture / Engineering Guides
 ## Subsystem Contracts
-[VERIFY]
-
-## CI
-[VERIFY LIVE]
-
-## Runtime Environments
-[VERIFY LIVE]
-
+## Engineering Lab / Environment Contract
+governance/ENGINEERING_ENVIRONMENT_CONTRACT.md
+## CI / Automation
+## Runtime / Device / Production-Like Environments
 ## Evidence
 .evidence/
-
 ## Reports
 .reports/
-
 ## Artifacts
-[VERIFY]
-
-## Infrastructure Definitions
-[VERIFY]
-
-## Operational Dashboards / Logs
-[VERIFY]
 """
+    adoption=f"""# Governance Adoption Status
+Project: {a.project_name}
+Repository: {a.repository}
+Official branch: {a.official_branch}
+Status: DRAFT_LIVE_VERIFICATION_REQUIRED
 
-
-def adoption_status(project_name: str, repository: str, branch: str) -> str:
-    return f"""# Governance Adoption Status
-
-Project: {project_name}
-Repository: {repository}
-Official branch: {branch}
-Status: NOT QUALIFIED
-
-The generated governance pack is only scaffolding.
-
-Before marking adoption QUALIFIED:
-
-- [ ] Verify repository identity from the live remote.
-- [ ] Verify the official branch from live repository settings.
-- [ ] Fetch and record the current official HEAD in each Task Packet, not here.
-- [ ] Inspect current repository instruction files.
-- [ ] Inspect CI workflows and required checks.
-- [ ] Inspect branch protection/rulesets.
-- [ ] Inspect secret scanning/security baseline.
-- [ ] Inspect deployment/runtime environments.
-- [ ] Define project-specific tests and evidence requirements.
-- [ ] Define protected paths and project-specific stop conditions.
-- [ ] Confirm secrets mechanism and backup/restore strategy.
-- [ ] Run a read-only governance task end to end.
-- [ ] Run one isolated implementation task end to end.
-- [ ] Run controlled governance stop-condition fixtures.
-- [ ] Confirm resulting evidence is attributable to the exact tested SHA.
-
-Only then change this file's status to QUALIFIED.
+- [ ] Complete read-only Master Re-baseline.
+- [ ] Produce MASTER ENGINEERING BASELINE REPORT.
+- [ ] Establish one MASTER ENGINEERING ROADMAP.
+- [ ] Verify repository authority, CI/tests, protection, secrets, lab, runtime matrix, evidence, and backups.
+- [ ] Prove stop conditions fail closed.
+- [ ] Complete one governed read-only task and one isolated implementation.
 """
+    baseline=f"""# MASTER ENGINEERING BASELINE REPORT
+Project: {a.project_name}
+Repository: {a.repository}
+Official branch: {a.official_branch}
+Verified official HEAD: [VERIFY LIVE]
+First-round mode: READ-ONLY
 
+## A. PROJECT IDENTITY
+## B. LIVE REPOSITORY STATE
+## C. CURRENT CANONICAL SOURCE
+## D. EXISTING REPOSITORY GOVERNANCE
+## E. BUILD / RELEASE CONFIGURATION
+## F. APPLICATION / SYSTEM ARCHITECTURE MAP
+## G. AUTHORITATIVE STATE / OWNERSHIP MAP
+## H. FEATURE / SUBSYSTEM INVENTORY
+## I. PLATFORM / RUNTIME CONTRACT
+## J. TEST INVENTORY
+## K. CI / AUTOMATION INVENTORY
+## L. SECURITY / PRIVACY BOUNDARIES
+## M. CURRENT EVIDENCE COVERAGE
+## N. RISK / GAP LEDGER
+## O. PROPOSED REPOSITORY AUTHORITY MODEL
+## P. PROPOSED PROJECT-SOURCES MODEL
+## Q. MASTER ENGINEERING ROADMAP STRUCTURE
+## R. ENGINEERING LAB PLAN
+## S. REQUIRED LAB TOOLCHAIN FOR THIS EXACT REPOSITORY
+## T. CONTROLLER / EXECUTOR OPERATING MODEL
+## U. EVIDENCE / REPORT STORAGE MODEL
+## V. OWNER-PROTECTED DECISIONS
+## W. EXACT NEXT ENGINEERING ROUND
+"""
+    roadmap=f"""# Master Engineering Roadmap
+Project: {a.project_name}
+Repository: {a.repository}
+Official branch: {a.official_branch}
+Status: DRAFT — LIVE VERIFICATION REQUIRED
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Bootstrap governance for a new or existing project.")
-    parser.add_argument("--project-name", required=True)
-    parser.add_argument("--repository", required=True, help="GitHub-style owner/name identity.")
-    parser.add_argument("--official-branch", default="main")
-    parser.add_argument("--destination", required=True, help="Target project root.")
-    parser.add_argument(
-        "--governance-source",
-        default="engineering-governance/MASTER_GOVERNANCE.md",
-        help="Reference to the governing baseline.",
-    )
-    args = parser.parse_args()
+## 1. Current Verified State
+## 2. Architecture
+## 3. Closed Historical Work
+## 4. Current Findings
+## 5. Release Blocker Map
+## 6. Qualification Gaps
+## 7. Ordered Engineering Gates
+## 8. Runtime Gates
+## 9. Release Gates
+## 10. Owner Decisions
+## 11. Deferred Post-Release Work
+## 12. Exact Immediate Next Round
 
-    validate_args(args.project_name, args.repository, args.official_branch)
-    destination = Path(args.destination)
-    root = ensure_safe_destination(destination)
-    root.mkdir(parents=True, exist_ok=True)
-
-    content = {
-        "PROJECT_PROFILE.md": project_profile_md(
-            args.project_name, args.repository, args.official_branch, args.governance_source
-        ),
-        "project-profile.json": project_profile_json(
-            args.project_name, args.repository, args.official_branch, args.governance_source
-        ),
-        "REPOSITORY_ENGINEERING_INSTRUCTIONS.md": repository_instructions(
-            args.repository, args.official_branch, args.governance_source
-        ),
-        "ENGINEERING_ENVIRONMENT_CONTRACT.md": environment_contract(args.project_name),
-        "RESOURCE_MAP.md": resource_map(args.project_name, args.repository, args.governance_source),
-        "ADOPTION_STATUS.md": adoption_status(
-            args.project_name, args.repository, args.official_branch
-        ),
-    }
-
-    for name, text in content.items():
-        (root / name).write_text(text, encoding="utf-8")
-
-    print("BOOTSTRAP=PASS")
-    print(f"project={args.project_name}")
-    print(f"repository={args.repository}")
-    print(f"official_branch={args.official_branch}")
-    print(f"governance_dir={root.resolve()}")
+Use FACT / INFERENCE / UNKNOWN / BLOCKED.
+"""
+    content={"PROJECT_PROFILE.md":md,"project-profile.json":json.dumps(profile,indent=2,sort_keys=True)+"\n",
+      "REPOSITORY_ENGINEERING_INSTRUCTIONS.md":repo_rules,"ENGINEERING_ENVIRONMENT_CONTRACT.md":env,
+      "RESOURCE_MAP.md":resource,"ADOPTION_STATUS.md":adoption,
+      "MASTER_ENGINEERING_BASELINE_REPORT.md":baseline,"MASTER_ENGINEERING_ROADMAP.md":roadmap}
+    for n,v in content.items(): (root/n).write_text(v,encoding="utf-8")
+    print("BOOTSTRAP=PASS"); print(f"project={a.project_name}"); print(f"repository={a.repository}")
+    print(f"official_branch={a.official_branch}"); print(f"governance_dir={root.resolve()}")
     print("status=DRAFT_LIVE_VERIFICATION_REQUIRED")
 
-
-if __name__ == "__main__":
-    main()
+if __name__=="__main__": main()

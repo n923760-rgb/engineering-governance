@@ -1,6 +1,6 @@
 # Protected Actions Authorization
 
-Protected actions normally require explicit current owner authorization. A stricter target-project policy may require more.
+Protected actions normally require explicit current owner authorization.
 
 ## Default Protected Actions
 
@@ -8,14 +8,17 @@ Protected actions normally require explicit current owner authorization. A stric
 - release
 - tag
 - signing
+- store publication
 - production deployment
+- DNS changes
 - destructive database migration
 - production credential rotation
-- server destruction/reinstall
+- protected production database operations
+- server/VPS/cloud destruction or reinstall
 - repository deletion
 - branch history rewrite / force push
-- permanent artifact deletion
-- billing/cloud-resource destruction
+- permanent release-artifact deletion
+- destructive billing/cloud-resource actions
 
 Technical access does not equal authorization.
 
@@ -24,11 +27,11 @@ Technical access does not equal authorization.
 ACTION:
 STATUS: [AUTHORIZED | NOT AUTHORIZED]
 AUTHORIZED BY:
-AUTHORIZATION SOURCE: [current owner instruction/reference]
+AUTHORIZATION SOURCE:
 SCOPE:
 TARGET:
-BOUNDARY: [one task / one PR / one release / other]
+BOUNDARY:
 REQUIRED EVIDENCE BEFORE EXECUTION:
 RESULT:
 
-A previous, historical, or unrelated authorization must never be silently reused for a different protected action.
+Historical or unrelated authorization must never be silently reused.

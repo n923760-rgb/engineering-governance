@@ -1,32 +1,31 @@
 # Governance Adoption Status
 
 Status: DRAFT_LIVE_VERIFICATION_REQUIRED
-Governance baseline: Global Engineering Governance Reference
+Governance baseline: Master Engineering System
 
-## Project Identity
+## Master Re-baseline
 
-PROJECT NAME:
-REPOSITORY:
-OFFICIAL BRANCH:
+- [ ] Read-only Master Re-baseline completed.
+- [ ] MASTER ENGINEERING BASELINE REPORT produced.
+- [ ] Repository identity/default branch/official branch/live HEAD verified.
+- [ ] Repository authority and project baselines identified.
+- [ ] Architecture/source/state-ownership map established.
+- [ ] Build/release/signing/deployment structure inspected.
+- [ ] Tests and CI inventoried.
+- [ ] Security/privacy boundaries inspected.
+- [ ] Runtime/device/platform evidence inventoried.
+- [ ] Engineering-lab requirements identified.
 
-## Live Qualification
+## Governance Foundation
 
-- [ ] Repository identity verified from live source.
-- [ ] Official branch verified.
-- [ ] Current official remote HEAD verified for the current adoption task.
-- [ ] Repository/project instructions identified and read.
+- [ ] One MASTER ENGINEERING ROADMAP established.
+- [ ] Repository authority file identified or created.
 - [ ] Applicable subsystem contracts identified.
-- [ ] Open/conflicting PR state inspected.
-- [ ] CI system and required checks identified.
-- [ ] Branch protection/rulesets inspected.
-- [ ] Secret scanning/security baseline inspected.
-- [ ] Execution environment identified.
-- [ ] Protected actions defined.
-- [ ] Stop conditions defined.
-- [ ] Test strategy defined.
-- [ ] Evidence/report locations defined.
-- [ ] Secrets mechanism verified.
-- [ ] Backup/restore policy defined where applicable.
+- [ ] CI/protection/secret-scanning state inspected.
+- [ ] Execution environment / engineering lab identified.
+- [ ] Protected actions and stop conditions defined.
+- [ ] Test strategy and evidence/report/artifact locations defined.
+- [ ] Secrets mechanism and backup/restore policy verified where applicable.
 - [ ] Task Packet / Result Packet protocol accepted.
 
 ## Governance Qualification Fixtures
@@ -42,12 +41,9 @@ OFFICIAL BRANCH:
 
 ## First Governed Workflows
 
-- [ ] One READ-ONLY DIAGNOSIS completed with attributable Result Packet.
-- [ ] One isolated IMPLEMENTATION completed with attributable validation.
+- [ ] One READ-ONLY DIAGNOSIS completed.
+- [ ] One isolated IMPLEMENTATION completed.
 - [ ] Exact-source CI/result verified.
-- [ ] Any merge used explicit owner authorization.
-- [ ] Post-merge validation recorded when applicable.
-
-Change status to `QUALIFIED` only after the applicable checks are proven.
+- [ ] Protected actions used explicit owner authorization.
 
 Governance qualification does not mean the product itself is production-qualified.

@@ -23,8 +23,6 @@ Git status after:
 Authorized actions:
 Actions actually performed:
 
-Rule: every action actually performed must be a subset of Authorized actions.
-
 ## Scope
 Completed:
 Observed but intentionally left out of scope:
@@ -36,23 +34,18 @@ Result:
 Evidence path:
 
 ## Validation Actually Run
-For each check record:
 - Check:
-- Result: PASS / FAIL / BLOCKED / SKIPPED / NOT RUN
+- Result: PASS / FAIL / BLOCKED / UNKNOWN / SKIPPED / NOT RUN
 - Evidence:
-- Reason: required for BLOCKED / SKIPPED / NOT RUN
+- Reason:
 
-Rules:
-- PASS, FAIL, and BLOCKED require attributable evidence.
-- BLOCKED, SKIPPED, and NOT RUN require a reason.
-- NOT RUN must never be reported as PASS.
+BLOCKED, UNKNOWN, SKIPPED, and NOT RUN must never be converted into PASS.
 
 ## Findings
 
 ### Facts
-
 ### Inferences
-
+### Unknowns
 ### Assumptions
 
 ## Changes
