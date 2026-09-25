@@ -34,4 +34,4 @@ First-round mode: READ-ONLY
 
 Classify significant findings as FACT / INFERENCE / UNKNOWN / BLOCKED.
 
-The first round is read-only. It may propose the initial or updated canonical roadmap state, but it must not create or update \`/ENGINEERING/MASTER_ROADMAP.md\` in the target repository.
+The first round is read-only. It may propose the initial or updated canonical roadmap state, but it must not create or update `/ENGINEERING/MASTER_ROADMAP.md` in the target repository.
