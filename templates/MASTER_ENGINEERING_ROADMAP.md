@@ -1,8 +1,12 @@
 # Master Engineering Roadmap
 
+Canonical target-project path: \`/ENGINEERING/MASTER_ROADMAP.md\`
+
 Status: DRAFT — LIVE VERIFICATION REQUIRED
 
 This is the **single permanent engineering roadmap** for the target project. Reconcile it with new evidence; do not create competing roadmaps.
+
+Detailed reports belong under \`/ENGINEERING/REPORTS/\`. Evidence indexes/metadata belong under \`/ENGINEERING/EVIDENCE/\`. Link to them from this roadmap instead of copying full report bodies here.
 
 ## 1. Current Verified State
 
@@ -10,6 +14,7 @@ Repository:
 Official branch:
 Verified official HEAD:
 Last verified:
+Available execution mode:
 Current active PRs:
 Current engineering phase:
 
@@ -42,5 +47,10 @@ Adapt gates to the project. Possible gates include repository/governance, canoni
 Task:
 Why now:
 Required authority:
+Required execution capability:
 Expected evidence:
 Stop conditions:
+
+## Linked Reports
+
+## Linked Evidence
