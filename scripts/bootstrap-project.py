@@ -70,6 +70,9 @@ def main() -> None:
             20,
         )
 
+    agents_path = destination / "AGENTS.md"
+    preserve_existing_agents = agents_path.exists()
+
     governance = destination / "governance"
     engineering = destination / "ENGINEERING"
     reports = engineering / "REPORTS"
@@ -92,7 +95,7 @@ DEFAULT BRANCH: [VERIFY LIVE]
 OFFICIAL BRANCH: {args.official_branch}
 
 ## Governing Instructions
-REPOSITORY AUTHORITY FILE: [VERIFY OR CREATE]
+REPOSITORY AUTHORITY FILE: AGENTS.md
 PROJECT BASELINE: [VERIFY]
 ARCHITECTURE GUIDES: [VERIFY]
 SUBSYSTEM CONTRACTS: [VERIFY]
@@ -132,7 +135,7 @@ Bootstrap scaffolding does not replace the mandatory read-only Master Re-baselin
         "repository_url": None,
         "default_branch": None,
         "official_branch": args.official_branch,
-        "repository_authority_file": None,
+        "repository_authority_file": "AGENTS.md",
         "project_baseline": None,
         "architecture_guides": [],
         "subsystem_contracts": [],
@@ -169,6 +172,155 @@ Bootstrap scaffolding does not replace the mandatory read-only Master Re-baselin
         "release_model": None,
         "runtime_device_platform_matrix": [],
     }
+
+    agents_md = f"""# Project Engineering Instructions
+
+Project: {args.project_name}
+Repository: {args.repository}
+Official branch: {args.official_branch}
+
+This repository is governed by the central Master Engineering System:
+
+https://github.com/n923760-rgb/engineering-governance
+
+## Authority Order
+
+1. Current explicit owner instruction
+2. This AGENTS.md
+3. Applicable scoped repository instructions
+4. Current MASTER_GOVERNANCE.md from the central governance repository
+5. Project architecture, subsystem, security, release, and engineering contracts
+6. Current live source and verified evidence
+7. Historical reports, roadmap state, prior conversations, and memory
+
+Live repository truth overrides historical memory.
+
+## Execution Capability
+
+At the beginning of every engineering session, verify what execution capabilities actually exist.
+
+Never claim repository access, source inspection, tests, builds, CI checks, runtime work, commits, pushes, merges, deployments, or other execution unless it actually occurred.
+
+Unavailable work must remain BLOCKED, NOT RUN, or UNKNOWN as appropriate.
+
+## Canonical Source
+
+Engineering work must derive from:
+
+current repository
++ current official branch
++ current verified HEAD
+
+Before repository mutation, verify repository identity, official branch, current official HEAD, applicable instructions, relevant open Pull Requests, and exact task scope.
+
+## Canonical Project Engineering Storage
+
+Master Roadmap: /ENGINEERING/MASTER_ROADMAP.md
+Reports: /ENGINEERING/REPORTS/
+Evidence: /ENGINEERING/EVIDENCE/
+
+Do not create a competing Master Roadmap elsewhere.
+
+At the beginning of a new session, after live repository verification, read the existing Master Roadmap when present.
+
+## First-Round Rule
+
+A newly adopted or re-baselined project begins with a strictly READ-ONLY Master Project Re-baseline.
+
+During that first round do not edit files, create branches, commit, push, open Pull Requests, merge, modify CI, modify repository settings, deploy, sign, release, or create/update /ENGINEERING/MASTER_ROADMAP.md.
+
+The first round may propose roadmap contents in the Master Engineering Baseline Report.
+
+## Change Policy
+
+Default engineering rule:
+
+ONE CONFIRMED PROBLEM = ONE BRANCH = ONE PULL REQUEST
+
+A coherent bounded feature may also use one branch and one Pull Request.
+
+Do not silently combine unrelated defects, refactoring, cleanup, or architecture changes.
+
+## Implementation Authority
+
+When implementation is explicitly authorized:
+
+1. verify live repository state;
+2. read applicable instructions;
+3. inspect current relevant source;
+4. confirm one bounded problem or feature;
+5. establish causal or requirement evidence;
+6. create an isolated task branch;
+7. prefer an isolated worktree when the environment supports it;
+8. implement the smallest production-correct change;
+9. add focused regression coverage when applicable;
+10. run appropriate validation;
+11. inspect all changed files and the complete diff;
+12. verify no secrets or accidental files;
+13. commit coherently;
+14. push when authorized;
+15. create/update the Pull Request;
+16. inspect CI;
+17. diagnose actual failures from evidence;
+18. leave protected actions to explicit current owner authorization.
+
+## Git Safety
+
+Do not force-push, rewrite published history, destructively reset official history, delete valid shared commits, move published tags, or create unauthorized releases.
+
+Technical access does not equal authorization.
+
+## Protected Actions
+
+Protected actions require explicit current owner authorization when applicable, including:
+
+- merge
+- tag
+- release
+- signing
+- store publication
+- production deployment
+- DNS changes
+- production credential changes
+- secret rotation
+- destructive database migrations
+- destructive server/VPS/cloud operations
+- repository deletion
+- force push/history rewrite
+- permanent release-artifact deletion
+- destructive billing/cloud-resource actions
+- protected product identity changes
+
+Historical or unrelated authorization must not be silently reused.
+
+## Testing Truth
+
+Use only truthful result states:
+
+PASS / FAIL / BLOCKED / UNKNOWN / NOT RUN / SKIPPED
+
+Never report PASS for a check that did not actually execute with attributable evidence.
+
+Green CI does not prove behavior CI did not test.
+
+## Stop Conditions
+
+Stop mutation when repository identity or official branch is uncertain, live HEAD conflicts with assumptions, authority is missing, execution capability is unavailable, secrets may be exposed, scope contains unrelated changes, evidence is insufficient, source changes during implementation, production impact is unclear, runtime qualification is unavailable, or destructive consequences remain unresolved.
+
+State exactly what is missing.
+
+## Final Rule
+
+Protect the working product first.
+
+Evidence before assumptions.
+Live repository before memory.
+One confirmed problem at a time.
+One bounded change at a time.
+One reviewable Pull Request at a time.
+Runtime evidence for runtime claims.
+Never use production users as test subjects.
+"""
 
     repository_rules = f"""# Repository Engineering Instructions
 
@@ -352,12 +504,16 @@ Associate evidence with the exact source SHA and link it from the relevant repor
         "ENGINEERING/EVIDENCE/README.md": evidence_readme,
     }
 
+    if not preserve_existing_agents:
+        agents_path.write_text(agents_md, encoding="utf-8")
+
     for relative_path, value in content.items():
         target = destination / relative_path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(value, encoding="utf-8")
 
     print("BOOTSTRAP=PASS")
+    print("agents=" + ("preserved_existing" if preserve_existing_agents else "created"))
     print(f"project={args.project_name}")
     print(f"repository={args.repository}")
     print(f"official_branch={args.official_branch}")
