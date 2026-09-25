@@ -312,18 +312,37 @@ def qualify_project_bootstrap(tmp: Path) -> None:
     )
 
     governance = target / "governance"
-    expected = {
-        "PROJECT_PROFILE.md",
-        "project-profile.json",
-        "REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
-        "ENGINEERING_ENVIRONMENT_CONTRACT.md",
-        "RESOURCE_MAP.md",
-        "ADOPTION_STATUS.md",
-        "MASTER_ENGINEERING_BASELINE_REPORT.md",
-        "MASTER_ENGINEERING_ROADMAP.md",
+    engineering = target / "ENGINEERING"
+
+    expected_paths = {
+        "governance/PROJECT_PROFILE.md",
+        "governance/project-profile.json",
+        "governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
+        "governance/ENGINEERING_ENVIRONMENT_CONTRACT.md",
+        "governance/RESOURCE_MAP.md",
+        "governance/ADOPTION_STATUS.md",
+        "ENGINEERING/MASTER_ROADMAP.md",
+        "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
+        "ENGINEERING/EVIDENCE/README.md",
     }
-    actual = {path.name for path in governance.iterdir() if path.is_file()}
-    require(expected == actual, f"bootstrap files mismatch: expected={expected} actual={actual}")
+    actual_paths = {
+        str(path.relative_to(target))
+        for path in target.rglob("*")
+        if path.is_file()
+    }
+    require(
+        expected_paths == actual_paths,
+        f"bootstrap files mismatch: expected={expected_paths} actual={actual_paths}",
+    )
+
+    require(
+        (engineering / "MASTER_ROADMAP.md").is_file(),
+        "bootstrap must create canonical ENGINEERING/MASTER_ROADMAP.md",
+    )
+    require(
+        not (governance / "MASTER_ENGINEERING_ROADMAP.md").exists(),
+        "bootstrap must not create a competing governance roadmap",
+    )
 
     profile = json.loads((governance / "project-profile.json").read_text(encoding="utf-8"))
     require(profile["project_name"] == "Qualification Project", "bootstrap project name mismatch")
@@ -336,6 +355,22 @@ def qualify_project_bootstrap(tmp: Path) -> None:
     require(
         profile.get("execution_environment") is None,
         "bootstrap must not invent execution environment identity",
+    )
+    require(
+        profile.get("verified_execution_capabilities") == [],
+        "bootstrap must not invent execution capabilities",
+    )
+    require(
+        profile.get("master_roadmap") == "ENGINEERING/MASTER_ROADMAP.md",
+        "bootstrap must use the canonical roadmap path",
+    )
+    require(
+        profile.get("report_location") == "ENGINEERING/REPORTS/",
+        "bootstrap must use the canonical report location",
+    )
+    require(
+        profile.get("evidence_location") == "ENGINEERING/EVIDENCE/",
+        "bootstrap must use the canonical evidence location",
     )
     print("PASS: generated governance profile remains draft and project-specific")
 
