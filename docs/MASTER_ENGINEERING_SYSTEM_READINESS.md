@@ -24,4 +24,4 @@ The current master must preserve:
 
 The bootstrap must create canonical target-project storage only when run in a later explicitly authorized mutation round.
 
-The published \`v1.0.0\` release remains immutable historical evidence. Current source may evolve beyond it. No future tag or release is implied by source readiness.
+The published `v1.0.0` release remains immutable historical evidence. Current source may evolve beyond it. No future tag or release is implied by source readiness.
