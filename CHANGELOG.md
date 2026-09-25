@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Automatically create a root `AGENTS.md` during authorized project bootstrap when one does not already exist, while preserving any existing repository-native `AGENTS.md` unchanged.
 - Adopt **Universal Project Start Prompt v2** as the canonical ready-to-use project entry prompt.
 - Require every session to verify actual execution capabilities before claiming repository, test, CI, runtime, or deployment work.
 - Fix the target-project Master Roadmap location at `/ENGINEERING/MASTER_ROADMAP.md`.
