@@ -20,7 +20,8 @@ def main():
     missing=[p for p in required if not (ROOT/p).is_file()]
     if missing: fail("missing capabilities: "+", ".join(missing))
     master=(ROOT/"MASTER_GOVERNANCE.md").read_text()
-    for m in ["# MASTER ENGINEERING SYSTEM","## LIVE TRUTH","## MASTER ENGINEERING ROADMAP",
+    for m in ["# MASTER ENGINEERING SYSTEM","## EXECUTION CAPABILITY DECLARATION",
+              "## LIVE TRUTH","## MASTER ENGINEERING ROADMAP","/ENGINEERING/MASTER_ROADMAP.md",
               "## PERMANENT ENGINEERING LAB","## FIRST ROUND","START THE READ-ONLY MASTER RE-BASELINE NOW."]:
         if m not in master: fail(f"master missing marker: {m}")
     workflow=(ROOT/".github/workflows/governance-ci.yml").read_text()
@@ -31,8 +32,16 @@ def main():
     h=subprocess.run([sys.executable,"scripts/bootstrap-project.py","--help"],cwd=ROOT,text=True,capture_output=True)
     if h.returncode: fail("project bootstrap is not runnable")
     b=(ROOT/"scripts/bootstrap-project.py").read_text()
-    for m in ["MASTER_ENGINEERING_ROADMAP.md","MASTER_ENGINEERING_BASELINE_REPORT.md","DRAFT_LIVE_VERIFICATION_REQUIRED"]:
+    for m in ["ENGINEERING/MASTER_ROADMAP.md",
+              "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
+              "ENGINEERING/EVIDENCE/","verified_execution_capabilities",
+              "DRAFT_LIVE_VERIFICATION_REQUIRED"]:
         if m not in b: fail(f"bootstrap missing marker: {m}")
+    prompt=(ROOT/"docs/NEW_PROJECT_ADOPTION_PROMPT.md").read_text()
+    for m in ["UNIVERSAL PROJECT START PROMPT (v2)","EXECUTION ENVIRONMENT — MANDATORY",
+              "/ENGINEERING/MASTER_ROADMAP.md",
+              "Do not modify the target repository during this first round."]:
+        if m not in prompt: fail(f"Universal Project Start Prompt v2 missing marker: {m}")
     print("MASTER_ENGINEERING_SYSTEM_READINESS=PASS")
     print(f"version={version}")
     print("release_tag_created=no")
