@@ -9,10 +9,10 @@ This repository is the **central reference for all software projects**. It is no
 - `MASTER_GOVERNANCE.md` — the Master Engineering System.
 - `GLOBAL_REFERENCE.md` — compact navigation and adoption entry point.
 - `AGENTS.md` — repository-specific instructions for maintaining this reference.
+- `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — **Universal Project Start Prompt v2**, the ready-to-use project entry prompt.
 - `docs/ADOPTION_GUIDE.md` — adoption for new and existing projects.
 - `docs/QUICK_START.md` — shortest safe adoption path.
-- `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — ready controller prompt.
-- `templates/MASTER_ENGINEERING_ROADMAP.md` — one permanent roadmap per target project.
+- `templates/MASTER_ENGINEERING_ROADMAP.md` — canonical roadmap template.
 - `templates/MASTER_ENGINEERING_BASELINE_REPORT.md` — first-round read-only re-baseline report.
 
 ## Core operating rule
@@ -21,45 +21,52 @@ This repository is the **central reference for all software projects**. It is no
 
 The target project's current repository and environment remain the source of truth. Historical chats, AI memory, old Pull Requests, archived SHAs, screenshots, copied configs, and another project's governance files are context only.
 
+## Execution capability first
+
+Every session must verify what it can actually do before claiming repository access or execution.
+
+Typical modes include a real Git/CLI environment, a repository API/MCP connector, external CI, a qualified engineering lab, or advisory-only chat.
+
+Unavailable actions are reported as `BLOCKED`, `NOT RUN`, or `UNKNOWN`; they are never simulated.
+
 ## First round for every adopted project
 
 Start with a **READ-ONLY MASTER RE-BASELINE**.
 
-Verify the live repository, architecture, source ownership, build/release model, tests, CI, security/privacy boundaries, runtime evidence, governance gaps, and engineering-lab requirements.
+Verify live repository state, architecture, source ownership, build/release model, tests, CI, security/privacy boundaries, runtime evidence, governance gaps, engineering-lab requirements, and any existing canonical roadmap.
 
-Do not mutate source during this first round.
+Do not mutate source or create/update the roadmap during this first round.
 
-The first formal output is a `MASTER ENGINEERING BASELINE REPORT`, followed by one maintained `MASTER ENGINEERING ROADMAP`.
+The first formal output is a `MASTER ENGINEERING BASELINE REPORT`, including a proposed roadmap state.
+
+## Canonical target-project engineering storage
+
+Every adopted target project uses one fixed convention:
+
+- `/ENGINEERING/MASTER_ROADMAP.md` — single permanent project roadmap.
+- `/ENGINEERING/REPORTS/` — detailed engineering reports.
+- `/ENGINEERING/EVIDENCE/` — evidence indexes/metadata and retained evidence as appropriate.
+
+The central governance repository owns reusable rules. The target repository owns its project-specific roadmap and evidence history.
 
 ## How every project uses this reference
 
-1. Start with the read-only Master Re-baseline.
-2. Derive project identity, official branch, live HEAD, repository authority, CI, toolchain, tests, runtime matrix, evidence locations, release model, and protected actions from live facts.
-3. Run `scripts/bootstrap-project.py` or copy the relevant templates into the target project's `governance/` directory.
-4. Replace placeholders using **that project's current live facts only**.
-5. Establish one Master Engineering Roadmap.
-6. Qualify the execution environment/lab that will execute work.
-7. For each implementation task, issue one bounded Task Packet.
-8. Prefer isolated branches/worktrees.
-9. Validate with the smallest deterministic proof first, then affected regressions.
-10. Produce attributable Result Packets and evidence.
-11. Use runtime/physical/production-like environments only for claims that require them.
+1. Verify the actual execution mode for the current session.
+2. Start with the read-only Master Re-baseline.
+3. Derive project identity, branch, live HEAD, authority, CI, toolchain, tests, runtime matrix, release model, and protected actions from live facts.
+4. Read `/ENGINEERING/MASTER_ROADMAP.md` if it already exists.
+5. Produce the Baseline Report and propose the roadmap state without writing during the read-only round.
+6. In a later explicitly authorized governance-mutation round, bootstrap or establish the project governance files and canonical `ENGINEERING/` structure.
+7. Qualify the execution environment/lab that will execute work.
+8. For each implementation task, issue one bounded Task Packet.
+9. Prefer isolated branches/worktrees when the actual execution mode supports them.
+10. Validate with the smallest deterministic proof first, then affected regressions.
+11. Produce attributable Result Packets, reports, and evidence.
 12. Perform protected actions only with explicit current owner authorization.
 
-## Repository layout
-
-- `MASTER_GOVERNANCE.md` — primary reusable engineering-system authority.
-- `GLOBAL_REFERENCE.md` — reference map and usage contract.
-- `AGENTS.md` — maintenance rules for this repository.
-- `templates/` — project, roadmap, baseline report, task, result, environment, subsystem, evidence, adoption, and protected-action templates.
-- `checklists/` — operational safety and review checklists.
-- `schemas/` — machine-readable validation schemas.
-- `scripts/` — bootstrap, live-state, PR-state, environment, evidence, and contract validation helpers.
-- `docs/` — concise authority, secrets, evidence, stop-condition, PR-state, adoption, and readiness references.
-- `examples/` — non-authoritative examples only.
-- `qualification/` — adversarial tests that prove stop conditions fail closed.
-
 ## Bootstrap
+
+Run the bootstrap only after the read-only baseline when repository mutation is explicitly authorized:
 
 ```bash
 python scripts/bootstrap-project.py \
@@ -69,7 +76,7 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
-The generated `governance/` directory is intentionally **DRAFT — LIVE VERIFICATION REQUIRED**. It is not automatically qualified.
+The generated governance and `ENGINEERING/` files are **DRAFT — LIVE VERIFICATION REQUIRED**. Scaffolding is not proof.
 
 ## Never copy between projects
 

@@ -30,6 +30,34 @@ The project owner remains the final authority for protected actions.
 
 ---
 
+## EXECUTION CAPABILITY DECLARATION
+
+Before every engineering session, determine the actual execution capabilities available in that session.
+
+The controller must explicitly classify the available execution mode using one or more real capabilities such as:
+
+- a CLI/coding agent with actual Git clone/fetch/push and shell access;
+- a repository API/MCP connector with repository read/write access but no shell;
+- a separate CI/CD environment;
+- a local or cloud engineering lab;
+- advisory chat with no repository or execution tools;
+- another verified execution capability.
+
+Do not trust a declared capability merely because it was written in a prompt. Verify the tools actually available to the current session.
+
+If an action cannot actually be performed in the available mode:
+
+- do not simulate it;
+- do not infer its result;
+- mark it truthfully as `BLOCKED`, `NOT RUN`, or `UNKNOWN` as appropriate;
+- state the missing capability.
+
+A model must never claim to have retrieved repository state, inspected source, run tests, checked CI, edited files, committed, pushed, merged, signed, deployed, or executed runtime work unless that action actually occurred through an available execution mechanism and has attributable evidence.
+
+Execution capability must be reverified at the beginning of each new session because tool availability may change.
+
+---
+
 ## PRIMARY OBJECTIVE
 
 Establish and maintain a complete, production-grade engineering operating system for the target project.
@@ -966,6 +994,14 @@ Establish one lightweight current resource map, such as:
 
 or an equivalent repository document if live inspection establishes a better existing convention.
 
+The resource map should point to the canonical project engineering storage:
+
+- `/ENGINEERING/MASTER_ROADMAP.md`
+- `/ENGINEERING/REPORTS/`
+- `/ENGINEERING/EVIDENCE/`
+
+Do not create a second roadmap under `governance/`, `docs/`, or another parallel path.
+
 It should identify:
 
 - canonical repository;
@@ -998,6 +1034,23 @@ Live HEAD must be reverified.
 ## MASTER ENGINEERING ROADMAP
 
 Maintain **ONE Master Engineering Roadmap** for the target project.
+
+The canonical project location is:
+
+`/ENGINEERING/MASTER_ROADMAP.md`
+
+relative to the target repository root.
+
+Supporting project engineering records should use:
+
+- detailed reports: `/ENGINEERING/REPORTS/`
+- retained evidence metadata/index: `/ENGINEERING/EVIDENCE/`
+
+The Master Roadmap is the project-level state and planning authority. It should link to detailed reports/evidence instead of absorbing every report body.
+
+The central `engineering-governance` repository contains reusable rules. The target project's `/ENGINEERING/MASTER_ROADMAP.md` contains only that project's verified state, history, decisions, risks, gates, and next round.
+
+At the beginning of a new session, after verifying live repository truth, read the existing canonical roadmap when present before creating new planning.
 
 Do not create competing roadmaps.
 
@@ -1222,6 +1275,14 @@ Preparing or recommending an action does not authorize it.
 
 Every significant engineering round should leave an attributable report.
 
+For target projects, the preferred canonical storage model is:
+
+- roadmap: `/ENGINEERING/MASTER_ROADMAP.md`
+- reports: `/ENGINEERING/REPORTS/`
+- evidence metadata/index: `/ENGINEERING/EVIDENCE/`
+
+The roadmap should summarize and link to detailed reports/evidence rather than become an append-only dump of full report bodies.
+
 Record as applicable:
 
 - Task ID
@@ -1347,6 +1408,9 @@ Verify and inspect:
 40. Existing security/privacy mechanisms.
 41. Current governance weaknesses.
 42. Current physical/runtime/production-like evidence retained in the repository.
+43. Existing `/ENGINEERING/MASTER_ROADMAP.md`, if any.
+
+Read an existing canonical roadmap as historical project context after live truth is verified.
 
 Do not manufacture findings.
 
@@ -1401,7 +1465,7 @@ M. CURRENT EVIDENCE COVERAGE
 N. RISK / GAP LEDGER  
 O. PROPOSED REPOSITORY AUTHORITY MODEL  
 P. PROPOSED PROJECT-SOURCES MODEL  
-Q. MASTER ENGINEERING ROADMAP STRUCTURE  
+Q. PROPOSED MASTER ENGINEERING ROADMAP STATE FOR `/ENGINEERING/MASTER_ROADMAP.md`  
 R. ENGINEERING LAB PLAN  
 S. REQUIRED LAB TOOLCHAIN FOR THIS EXACT REPOSITORY  
 T. CONTROLLER / EXECUTOR OPERATING MODEL  
@@ -1415,6 +1479,8 @@ Every significant finding must be classified:
 - `INFERENCE`
 - `UNKNOWN`
 - `BLOCKED`
+
+The first round may propose the initial or updated roadmap contents, but it must not create or update `/ENGINEERING/MASTER_ROADMAP.md` while the round remains read-only.
 
 ---
 
@@ -1445,6 +1511,8 @@ The intended operating progression is:
 → RELEASE CANDIDATE  
 → OWNER RELEASE DECISION**
 
+In the first later mutation round that explicitly authorizes repository governance changes, establish or update `/ENGINEERING/MASTER_ROADMAP.md` and the supporting report/evidence structure as applicable.
+
 Maintain the **same Master Roadmap** throughout.
 
 Do not restart the project after every conversation.
@@ -1469,7 +1537,8 @@ Stop mutation and remain safe/read-only whenever:
 - production impact is unclear;
 - environment is unstable;
 - resource exhaustion could invalidate results;
-- destructive consequences are unresolved.
+- destructive consequences are unresolved;
+- the current execution mode is undeclared, ambiguous, or does not actually support the requested action.
 
 A stop condition is not a failure.
 
@@ -1520,6 +1589,7 @@ Before applying this governance system to a target project, derive and record it
 - SUBSYSTEM CONTRACTS
 - CI SYSTEM
 - EXECUTION ENVIRONMENT
+- VERIFIED EXECUTION CAPABILITIES
 - CONTROLLER
 - EXECUTOR
 - PROTECTED ACTIONS
@@ -1540,5 +1610,12 @@ Derive them from the target project's own current environment.
 # START CONDITION
 
 For a newly adopted project or a project being re-baselined:
+
+1. verify actual execution capabilities;
+2. retrieve live repository truth only through capabilities that actually exist;
+3. read an existing `/ENGINEERING/MASTER_ROADMAP.md` after live truth verification if present;
+4. keep the first round strictly read-only;
+5. produce the Master Engineering Baseline Report;
+6. propose the roadmap state without writing it during the read-only round.
 
 **START THE READ-ONLY MASTER RE-BASELINE NOW.**

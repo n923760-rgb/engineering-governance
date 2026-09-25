@@ -5,6 +5,7 @@ Controller:
 Repository:
 Official branch:
 Verified official HEAD:
+Verified execution mode:
 First-round mode: READ-ONLY
 
 ## A. PROJECT IDENTITY
@@ -23,7 +24,7 @@ First-round mode: READ-ONLY
 ## N. RISK / GAP LEDGER
 ## O. PROPOSED REPOSITORY AUTHORITY MODEL
 ## P. PROPOSED PROJECT-SOURCES MODEL
-## Q. MASTER ENGINEERING ROADMAP STRUCTURE
+## Q. PROPOSED MASTER ENGINEERING ROADMAP STATE FOR /ENGINEERING/MASTER_ROADMAP.md
 ## R. ENGINEERING LAB PLAN
 ## S. REQUIRED LAB TOOLCHAIN FOR THIS EXACT REPOSITORY
 ## T. CONTROLLER / EXECUTOR OPERATING MODEL
@@ -33,4 +34,4 @@ First-round mode: READ-ONLY
 
 Classify significant findings as FACT / INFERENCE / UNKNOWN / BLOCKED.
 
-No source mutation belongs in this first-round report.
+The first round is read-only. It may propose the initial or updated canonical roadmap state, but it must not create or update `/ENGINEERING/MASTER_ROADMAP.md` in the target repository.
