@@ -8,11 +8,11 @@ This file records authoritative locations. It is not a second rulebook and must 
 
 ## Master Engineering Baseline Report
 
-Canonical location: \`/ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md\`
+Canonical location: `/ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md`
 
 ## Master Engineering Roadmap
 
-Canonical location: \`/ENGINEERING/MASTER_ROADMAP.md\`
+Canonical location: `/ENGINEERING/MASTER_ROADMAP.md`
 
 Do not create a competing roadmap elsewhere.
 
@@ -24,11 +24,11 @@ Do not create a competing roadmap elsewhere.
 
 ## Evidence
 
-Canonical location: \`/ENGINEERING/EVIDENCE/\`
+Canonical location: `/ENGINEERING/EVIDENCE/`
 
 ## Reports
 
-Canonical location: \`/ENGINEERING/REPORTS/\`
+Canonical location: `/ENGINEERING/REPORTS/`
 
 ## Artifacts
 ## Infrastructure Definitions
