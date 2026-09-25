@@ -76,6 +76,8 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
+The bootstrap also creates a root `AGENTS.md` automatically for a project that does not already have one. If the project already has `AGENTS.md`, it is preserved exactly and is not overwritten.
+
 The generated governance and `ENGINEERING/` files are **DRAFT — LIVE VERIFICATION REQUIRED**. Scaffolding is not proof.
 
 ## Never copy between projects
