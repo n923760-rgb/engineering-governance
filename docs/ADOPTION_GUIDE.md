@@ -38,6 +38,8 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
+The bootstrap creates root `AGENTS.md` automatically when the target project does not already have one. If an existing `AGENTS.md` is present, preserve it exactly; repository-native authority must not be overwritten by generic scaffolding.
+
 Generated files are scaffolding, not proof. The bootstrap must not be run as part of the strictly read-only first round.
 
 ## 5. Qualify the engineering environment
