@@ -1,48 +1,63 @@
-# Global Engineering Governance Reference
+# Master Engineering System
 
-A reusable, project-agnostic governance system for AI-assisted software engineering.
+A reusable, project-agnostic engineering operating system for AI-assisted production software engineering.
 
-This repository is the **central reference for all software projects**. It is not tied to TYFINO or any other product, framework, platform, repository, cloud provider, or execution environment.
+This repository is the **central reference for all software projects**. It is not tied to any one product, framework, platform, repository, cloud provider, lab provider, or execution environment.
 
 ## Primary authority
 
-- `MASTER_GOVERNANCE.md` — global governance authority.
+- `MASTER_GOVERNANCE.md` — the Master Engineering System.
 - `GLOBAL_REFERENCE.md` — compact navigation and adoption entry point.
+- `AGENTS.md` — repository-specific instructions for maintaining this reference.
 - `docs/ADOPTION_GUIDE.md` — adoption for new and existing projects.
 - `docs/QUICK_START.md` — shortest safe adoption path.
 - `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — ready controller prompt.
+- `templates/MASTER_ENGINEERING_ROADMAP.md` — one permanent roadmap per target project.
+- `templates/MASTER_ENGINEERING_BASELINE_REPORT.md` — first-round read-only re-baseline report.
 
-## Core rule
+## Core operating rule
 
-Current Problem → Current Source → Isolated Change → Evidence → Review → Merge Decision
+**Live repository truth → governance → one Master Roadmap → bounded task → isolated execution → validation → evidence → review → protected decision**
 
-The target project's current repository and environment remain the source of truth. Historical chats, AI memory, old pull requests, archived SHAs, screenshots, copied configs, and another project's governance files are context only.
+The target project's current repository and environment remain the source of truth. Historical chats, AI memory, old Pull Requests, archived SHAs, screenshots, copied configs, and another project's governance files are context only.
+
+## First round for every adopted project
+
+Start with a **READ-ONLY MASTER RE-BASELINE**.
+
+Verify the live repository, architecture, source ownership, build/release model, tests, CI, security/privacy boundaries, runtime evidence, governance gaps, and engineering-lab requirements.
+
+Do not mutate source during this first round.
+
+The first formal output is a `MASTER ENGINEERING BASELINE REPORT`, followed by one maintained `MASTER ENGINEERING ROADMAP`.
 
 ## How every project uses this reference
 
-1. Start with a read-only Live Truth Gate.
-2. Identify the target repository, official branch, current remote HEAD, instructions, CI, execution environment, branch protection/rulesets, secret scanning, tests, evidence/report locations, and backup/restore policy.
+1. Start with the read-only Master Re-baseline.
+2. Derive project identity, official branch, live HEAD, repository authority, CI, toolchain, tests, runtime matrix, evidence locations, release model, and protected actions from live facts.
 3. Run `scripts/bootstrap-project.py` or copy the relevant templates into the target project's `governance/` directory.
 4. Replace placeholders using **that project's current live facts only**.
-5. Run governance qualification before normal production engineering.
-6. For each engineering task, issue one bounded `TASK_PACKET.md`.
-7. Work in an isolated branch/worktree.
-8. Validate with the smallest deterministic proof first, then relevant regressions.
-9. Produce a `RESULT_PACKET.md` and attributable evidence.
-10. Perform protected actions only with explicit current owner authorization.
+5. Establish one Master Engineering Roadmap.
+6. Qualify the execution environment/lab that will execute work.
+7. For each implementation task, issue one bounded Task Packet.
+8. Prefer isolated branches/worktrees.
+9. Validate with the smallest deterministic proof first, then affected regressions.
+10. Produce attributable Result Packets and evidence.
+11. Use runtime/physical/production-like environments only for claims that require them.
+12. Perform protected actions only with explicit current owner authorization.
 
 ## Repository layout
 
-- `MASTER_GOVERNANCE.md` — global reusable governance authority.
+- `MASTER_GOVERNANCE.md` — primary reusable engineering-system authority.
 - `GLOBAL_REFERENCE.md` — reference map and usage contract.
-- `templates/` — project, repository, task, result, environment, subsystem, evidence, adoption, and protected-action templates.
+- `AGENTS.md` — maintenance rules for this repository.
+- `templates/` — project, roadmap, baseline report, task, result, environment, subsystem, evidence, adoption, and protected-action templates.
 - `checklists/` — operational safety and review checklists.
 - `schemas/` — machine-readable validation schemas.
-- `scripts/` — bootstrap, Live Gate, PR-state, environment, evidence, and packet validation helpers.
-- `docs/` — concise authority, secrets, evidence, stop-condition, PR-state, and adoption references.
+- `scripts/` — bootstrap, live-state, PR-state, environment, evidence, and contract validation helpers.
+- `docs/` — concise authority, secrets, evidence, stop-condition, PR-state, adoption, and readiness references.
 - `examples/` — non-authoritative examples only.
 - `qualification/` — adversarial tests that prove stop conditions fail closed.
-- `docs/V1_READINESS.md` — scope of the qualified v1 baseline.
 
 ## Bootstrap
 
@@ -54,28 +69,24 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
-The generated `governance/` directory is intentionally **DRAFT — LIVE VERIFICATION REQUIRED**. It must never be treated as automatically qualified.
+The generated `governance/` directory is intentionally **DRAFT — LIVE VERIFICATION REQUIRED**. It is not automatically qualified.
 
 ## Never copy between projects
 
-Do not copy repository SHAs, server identities, credentials, secret values, paths, CI identities, infrastructure details, test counts, production topology, backup destinations, or historical product decisions from another project.
-
-Derive them from the target project's own current environment.
+Do not copy repository SHAs, server identities, credentials, secret values, paths, CI identities, infrastructure details, test counts, production topology, backup destinations, runtime assumptions, or historical product decisions from another project.
 
 ## Protected actions
 
-Protected actions normally require explicit current owner authorization. Typical examples include merge, release, tag, signing, production deployment, destructive database migration, production credential rotation, server destruction/reinstall, repository deletion, branch history rewrite, permanent artifact deletion, and billing/cloud-resource destruction.
+Protected actions normally require explicit current owner authorization. Typical examples include merge, release, tag, signing, store publication, production deployment, DNS changes, destructive database migration, production credential rotation, server/cloud destruction or reinstall, repository deletion, branch-history rewrite, permanent release-artifact deletion, and destructive billing/cloud-resource actions.
 
 Technical access does not equal authorization.
 
 ## Validation vocabulary
 
-Use only accurate states: `PASS`, `FAIL`, `BLOCKED`, `SKIPPED`, `NOT RUN`.
-
-`BLOCKED` is not `PASS`. `NOT RUN` must remain visible.
+`PASS` / `FAIL` / `BLOCKED` / `UNKNOWN` / `NOT RUN` / `SKIPPED`
 
 ## Release state
 
-Stable published release: `v1.0.0`.
+Stable published historical release: `v1.0.0`.
 
-The published `v1.0.0` tag and GitHub Release are immutable historical release evidence. Changes merged to `main` after that release are **unreleased** until a future version is explicitly authorized, qualified, and published.
+The `v1.0.0` tag and GitHub Release are immutable evidence. Current `main` may contain unreleased evolution of the Master Engineering System. A future release requires a separate explicit owner decision and exact-source qualification.

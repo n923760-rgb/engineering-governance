@@ -1,30 +1,30 @@
-# Quick Start — Any Project
+# Quick Start — Master Engineering System
 
-## New project
+## New or existing project
 
-1. Create or identify the project repository.
-2. Start governance adoption in READ-ONLY mode.
-3. Verify repository identity, official branch, current HEAD, instructions, open/conflicting PRs, CI, branch protection/rulesets, secret scanning, execution environment, test strategy, evidence/report locations, and backup/restore policy.
-4. Bootstrap the `governance/` directory.
-5. Fill placeholders only from live project facts.
-6. Run governance qualification fixtures.
-7. Mark adoption `QUALIFIED` only after safe-stop behavior is proven.
-8. Begin normal engineering with atomic Task Packets.
+1. Identify the target repository.
+2. Start in **READ-ONLY** mode.
+3. Perform the Master Re-baseline: repository identity and live state, authority, architecture/source ownership, build/release model, tests/CI, security/privacy, runtime evidence, governance gaps, and lab/toolchain requirements.
+4. Produce one `MASTER ENGINEERING BASELINE REPORT`.
+5. Bootstrap the target project's `governance/` directory.
+6. Fill placeholders only from live target-project facts.
+7. Establish **one** `MASTER_ENGINEERING_ROADMAP.md`.
+8. Qualify the execution environment / engineering lab.
+9. Prove governance stop conditions fail closed.
+10. Begin normal engineering with bounded Task Packets and attributable Result Packets.
 
-## Existing project
+## Existing projects
 
-1. Do not rewrite product architecture merely to fit this governance system.
-2. Map the current repository and existing authoritative contracts first.
-3. Reuse existing project documentation where it already owns a subject.
-4. Add only missing governance layers.
-5. Keep governance adoption separate from product behavior changes.
-6. Require exact-source validation on the adoption PR.
-7. Verify post-merge validation on the resulting official HEAD.
+Do not rewrite working architecture merely to fit governance. Reuse authoritative project documentation where it already owns a subject and add only missing governance layers.
 
 ## Before every source mutation
 
-Verify live state again.
+Verify live repository state again.
 
 ## Before every protected action
 
 Verify explicit current owner authorization for that exact action and scope.
+
+## Validation vocabulary
+
+`PASS` / `FAIL` / `BLOCKED` / `UNKNOWN` / `NOT RUN` / `SKIPPED`

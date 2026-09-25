@@ -319,6 +319,8 @@ def qualify_project_bootstrap(tmp: Path) -> None:
         "ENGINEERING_ENVIRONMENT_CONTRACT.md",
         "RESOURCE_MAP.md",
         "ADOPTION_STATUS.md",
+        "MASTER_ENGINEERING_BASELINE_REPORT.md",
+        "MASTER_ENGINEERING_ROADMAP.md",
     }
     actual = {path.name for path in governance.iterdir() if path.is_file()}
     require(expected == actual, f"bootstrap files mismatch: expected={expected} actual={actual}")

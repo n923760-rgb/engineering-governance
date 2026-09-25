@@ -1,27 +1,12 @@
-# Adopting Global Engineering Governance in Any Project
+# Adopting the Master Engineering System in Any Project
 
-This repository is a reusable control system. A target project must derive its own facts from its current source and environment.
+A target project must derive its own facts from current source and environment.
 
-## 1. Start Read-Only
+## 1. Start with the Master Re-baseline
 
-Before creating governance files or changing source, inspect:
-- repository identity;
-- official branch;
-- current official remote HEAD;
-- repository/project instructions;
-- relevant subsystem contracts;
-- open/conflicting PRs;
-- CI and required checks;
-- branch protection/rulesets;
-- secret scanning/security baseline;
-- execution/runtime environment;
-- test strategy;
-- evidence/report locations;
-- backup/restore policy;
-- protected paths;
-- project-specific stop conditions.
+The first round is read-only. Inspect repository identity, branches/live HEAD, instructions, architecture and subsystem contracts, active PRs, toolchain, product identity, release/signing/deployment structure, source/state ownership, tests/CI, protection/security, runtime evidence, lab requirements, evidence/report/artifact locations, backup/restore, and project stop conditions.
 
-If any expected identity or SHA differs from live truth, stop mutation and investigate first.
+Produce a `MASTER ENGINEERING BASELINE REPORT` before normal implementation.
 
 ## 2. Bootstrap
 
@@ -33,36 +18,28 @@ python scripts/bootstrap-project.py \
   --destination /path/to/example-project
 ```
 
-The command creates only a `governance/` directory and refuses to overwrite generated governance files that already exist.
+Generated files are scaffolding, not proof.
 
-## 3. Replace Placeholders from Live Facts
+## 3. Establish one Master Roadmap
 
-Generated values are scaffolding, not proof. Keep live SHAs in Task Packets and Result Packets, not in long-lived project profiles.
+Create and maintain one `MASTER_ENGINEERING_ROADMAP.md`. Reconcile it with new evidence instead of creating competing roadmaps.
 
-Never copy another project's repository name, current SHA, server identity, credentials, paths, CI identities, infrastructure details, test counts, production topology, or historical product decisions.
+Classify important claims as `FACT`, `INFERENCE`, `UNKNOWN`, or `BLOCKED`.
 
-## 4. Qualify the Governance Process
+## 4. Qualify the engineering environment
 
-Before normal production engineering, prove safe stopping for representative failures:
-- wrong expected SHA;
-- dirty worktree;
-- unauthorized protected action;
-- conflicting PR;
-- missing evidence;
-- resource/environment failure;
-- secret exposure attempt;
-- scope expansion.
+Record the actual lab/execution environment, toolchains, paths, resources, artifacts, evidence retention, backups, and runtime limitations. Use a hybrid model when the lab cannot prove required runtime behavior.
 
-A safe stop is a successful governance outcome.
+## 5. Qualify governance
 
-## 5. First Governed Tasks
+Prove safe stopping for wrong SHA, dirty source, unauthorized protected action, conflicting PR, missing evidence, environment failure, secret exposure attempt, and scope expansion.
 
-First run one READ-ONLY DIAGNOSIS end to end. Then run one small isolated IMPLEMENTATION task with exact-source validation.
+## 6. First governed work
 
-Merge only when explicitly authorized.
+Run one read-only diagnosis end to end, then one small isolated implementation task with exact-source validation.
 
-## 6. Adoption Qualification
+## 7. Adoption qualification
 
-Mark `governance/ADOPTION_STATUS.md` as `QUALIFIED` only when project identity, authority, CI/tests, environment, secrets, protection state, qualification fixtures, and attributable evidence have been proven.
+Mark adoption `QUALIFIED` only when project identity, repository authority, roadmap, CI/tests, environment/lab, secrets, protection state, qualification fixtures, and attributable evidence are proven.
 
 Governance qualification does not mean the product itself is production-qualified.

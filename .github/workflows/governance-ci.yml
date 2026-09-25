@@ -15,34 +15,27 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate governance system
+    name: Validate Master Engineering System
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Checkout exact source
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Verify execution environment capacity
         run: python scripts/verify-environment-capacity.py --path . --min-free-bytes 1048576
-
       - name: Validate repository contracts
         run: python scripts/validate-repository.py
-
       - name: Scan tracked text for baseline secret patterns
         run: python scripts/scan-secrets.py
-
       - name: Run governance stop-condition qualification
         run: python qualification/run-qualification.py
-
-      - name: Verify v1 release-candidate readiness
-        run: python scripts/verify-v1-readiness.py
-
+      - name: Verify Master Engineering System readiness
+        run: python scripts/verify-system-readiness.py
       - name: Record source identity
         run: |
           printf 'tested_sha=%s\n' "$(git rev-parse HEAD)"

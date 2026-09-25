@@ -1,26 +1,31 @@
 # Project Governance Profile
 
-Status: DRAFT
-Governance baseline: Global Engineering Governance Reference
+Status: DRAFT — LIVE VERIFICATION REQUIRED
+Governance baseline: Master Engineering System
 
 ## Project Identity
 
 PROJECT NAME:
 REPOSITORY:
+REPOSITORY URL:
+DEFAULT BRANCH:
 OFFICIAL BRANCH:
 
 ## Governing Instructions
 
-REPOSITORY INSTRUCTION FILE:
-PROJECT INSTRUCTION FILE:
-ENGINEERING GUIDE:
+REPOSITORY AUTHORITY FILE:
+PROJECT BASELINE:
+ARCHITECTURE GUIDES:
 SUBSYSTEM CONTRACTS:
 
 ## Engineering Systems
 
+MASTER ROADMAP:
+MASTER BASELINE REPORT:
 CI SYSTEM:
 BRANCH PROTECTION / RULESET:
 SECRET SCANNING / SECURITY BASELINE:
+ENGINEERING LAB CONTRACT:
 EXECUTION ENVIRONMENT:
 CONTROLLER:
 EXECUTOR:
@@ -34,13 +39,13 @@ PROTECTED ACTIONS:
 TEST STRATEGY:
 EVIDENCE LOCATION:
 REPORT LOCATION:
-BACKUP STRATEGY:
-RESTORE QUALIFICATION:
+ARTIFACT LOCATION:
+BACKUP / RESTORE STRATEGY:
+RELEASE MODEL:
+RUNTIME / DEVICE / PLATFORM MATRIX:
 
 ## Project-Specific Stop Conditions
 
-- [Add only project-specific conditions. Generic conditions remain in MASTER_GOVERNANCE.md]
-
 ## Notes
 
-All values must be derived from the project's current live environment. Do not copy identities, SHAs, credentials, paths, or historical decisions from another project.
+All values must be derived from the project's current live environment.
