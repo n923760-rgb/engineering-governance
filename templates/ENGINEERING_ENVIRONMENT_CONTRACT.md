@@ -51,11 +51,11 @@ Before mutation, run the environment preflight appropriate to this environment w
 
 Baseline command for a shell-capable environment:
 
-\`\`\`bash
+```bash
 python scripts/verify-environment-capacity.py --path <working-path> --min-free-bytes <required-bytes>
-\`\`\`
+```
 
-For strictly read-only work, a project may explicitly permit \`--skip-write-test\`.
+For strictly read-only work, a project may explicitly permit `--skip-write-test`.
 
 If shell execution is unavailable, do not pretend this command ran. Record it as NOT RUN/BLOCKED and use only the checks genuinely available through the current execution mode.
 
