@@ -86,8 +86,9 @@ def main():
         for a in anchors:
             if a not in content: fail(f"{rel} missing required anchor: {a}")
     bootstrap=(ROOT/"scripts/bootstrap-project.py").read_text()
-    for marker in ["ENGINEERING/MASTER_ROADMAP.md","ENGINEERING/REPORTS/","ENGINEERING/EVIDENCE/","verified_execution_capabilities"]:
-        if marker not in bootstrap: fail(f"bootstrap missing v2 marker: {marker}")
+    for marker in ["AGENTS.md","ENGINEERING/MASTER_ROADMAP.md","ENGINEERING/REPORTS/","ENGINEERING/EVIDENCE/",
+                   "verified_execution_capabilities","preserved_existing","repository_authority_file"]:
+        if marker not in bootstrap: fail(f"bootstrap missing required marker: {marker}")
     forbidden_target_path="governance/MASTER_ENGINEERING_ROADMAP.md"
     for rel in ["README.md","GLOBAL_REFERENCE.md","docs/QUICK_START.md","docs/ADOPTION_GUIDE.md",
                 "docs/NEW_PROJECT_ADOPTION_PROMPT.md","MASTER_GOVERNANCE.md","scripts/bootstrap-project.py"]:

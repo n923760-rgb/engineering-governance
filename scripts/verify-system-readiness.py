@@ -32,10 +32,10 @@ def main():
     h=subprocess.run([sys.executable,"scripts/bootstrap-project.py","--help"],cwd=ROOT,text=True,capture_output=True)
     if h.returncode: fail("project bootstrap is not runnable")
     b=(ROOT/"scripts/bootstrap-project.py").read_text()
-    for m in ["ENGINEERING/MASTER_ROADMAP.md",
+    for m in ["AGENTS.md","ENGINEERING/MASTER_ROADMAP.md",
               "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
               "ENGINEERING/EVIDENCE/","verified_execution_capabilities",
-              "DRAFT_LIVE_VERIFICATION_REQUIRED"]:
+              "preserved_existing","DRAFT_LIVE_VERIFICATION_REQUIRED"]:
         if m not in b: fail(f"bootstrap missing marker: {m}")
     prompt=(ROOT/"docs/NEW_PROJECT_ADOPTION_PROMPT.md").read_text()
     for m in ["UNIVERSAL PROJECT START PROMPT (v2)","EXECUTION ENVIRONMENT — MANDATORY",

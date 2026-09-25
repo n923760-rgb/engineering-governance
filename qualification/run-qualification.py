@@ -315,6 +315,7 @@ def qualify_project_bootstrap(tmp: Path) -> None:
     engineering = target / "ENGINEERING"
 
     expected_paths = {
+        "AGENTS.md",
         "governance/PROJECT_PROFILE.md",
         "governance/project-profile.json",
         "governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
@@ -335,6 +336,19 @@ def qualify_project_bootstrap(tmp: Path) -> None:
         f"bootstrap files mismatch: expected={expected_paths} actual={actual_paths}",
     )
 
+    require(
+        (target / "AGENTS.md").is_file(),
+        "bootstrap must create root AGENTS.md for a new project",
+    )
+    agents_text = (target / "AGENTS.md").read_text(encoding="utf-8")
+    require(
+        "https://github.com/n923760-rgb/engineering-governance" in agents_text,
+        "generated AGENTS.md must point to the central governance repository",
+    )
+    require(
+        "/ENGINEERING/MASTER_ROADMAP.md" in agents_text,
+        "generated AGENTS.md must declare the canonical roadmap path",
+    )
     require(
         (engineering / "MASTER_ROADMAP.md").is_file(),
         "bootstrap must create canonical ENGINEERING/MASTER_ROADMAP.md",
@@ -389,6 +403,39 @@ def qualify_project_bootstrap(tmp: Path) -> None:
         20,
         output_must_contain="refusing to overwrite existing governance files",
     )
+
+    existing_agents_target = tmp / "existing-agents-target"
+    existing_agents_target.mkdir()
+    existing_agents = existing_agents_target / "AGENTS.md"
+    original_agents = "# Existing Project Authority\n\nPreserve this file exactly.\n"
+    existing_agents.write_text(original_agents, encoding="utf-8")
+
+    expect_code(
+        "bootstrap preserves existing root AGENTS.md",
+        [
+            sys.executable,
+            str(BOOTSTRAP),
+            "--project-name",
+            "Existing Authority Project",
+            "--repository",
+            "owner/existing-authority-project",
+            "--official-branch",
+            "main",
+            "--destination",
+            str(existing_agents_target),
+        ],
+        0,
+        output_must_contain="agents=preserved_existing",
+    )
+    require(
+        existing_agents.read_text(encoding="utf-8") == original_agents,
+        "bootstrap must not overwrite an existing AGENTS.md",
+    )
+    require(
+        (existing_agents_target / "ENGINEERING" / "MASTER_ROADMAP.md").is_file(),
+        "bootstrap must continue creating other governance files when AGENTS.md already exists",
+    )
+    print("PASS: existing project AGENTS.md is preserved")
 
     invalid = tmp / "invalid-adoption-target"
     expect_code(

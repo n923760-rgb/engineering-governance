@@ -10,6 +10,7 @@
 6. If `/ENGINEERING/MASTER_ROADMAP.md` exists, read it after live truth verification; if it does not, propose its initial contents in the report.
 7. Do **not** create/update the roadmap during the read-only round.
 8. In a later explicitly authorized governance-mutation round, bootstrap or establish:
+   - root `AGENTS.md` automatically when none exists; preserve an existing one
    - `/ENGINEERING/MASTER_ROADMAP.md`
    - `/ENGINEERING/REPORTS/`
    - `/ENGINEERING/EVIDENCE/`
