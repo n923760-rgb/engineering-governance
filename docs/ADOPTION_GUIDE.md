@@ -37,6 +37,10 @@ Review central policy updates before adopting them. Update the same lock and
 project authority through an authorized bounded change, retaining previous
 adoption evidence. Never create a competing roadmap.
 
+For projects using v1 packet/validator contracts, follow the migration table in
+docs/GOVERNANCE_VERSIONING.md. Reconcile existing files through a reviewed change;
+bootstrap is a new-adoption scaffold, not an in-place upgrade command.
+
 ## Qualification
 
 QUALIFIED requires the applicable combination of verified identity/source,

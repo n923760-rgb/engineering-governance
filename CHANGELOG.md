@@ -11,6 +11,7 @@
 - Consolidate authority and continuity, standing authorization, sequential agent roles, and untrusted-content policy.
 - Shorten the master and project-start prompt while preserving safety and qualification contracts.
 - Pin GitHub Actions and validation dependencies; retain immutable historical v1.0.0 evidence.
+- Document v1-to-v2 contract migration, existing-project reconciliation and bounded adoption rollback.
 
 ### Earlier unreleased evolution
 
