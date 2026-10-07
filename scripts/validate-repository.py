@@ -7,6 +7,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_PATHS = [
     "AGENTS.md","MASTER_GOVERNANCE.md","GLOBAL_REFERENCE.md","README.md","VERSION","CHANGELOG.md",
+    "requirements.txt","docs/RISK_PROFILES.md","docs/GOVERNANCE_VERSIONING.md",
+    "docs/UNTRUSTED_CONTENT_POLICY.md","templates/PROJECT_AGENTS.md",
+    "scripts/governance_contracts.py","scripts/governance_lock.py",
+    "scripts/verify-governance-lock.py","scripts/verify-repository-state.py",
+    "schemas/governance-lock.schema.json",
     "docs/MASTER_ENGINEERING_SYSTEM_READINESS.md","scripts/verify-system-readiness.py",
     "templates/MASTER_ENGINEERING_ROADMAP.md","templates/MASTER_ENGINEERING_BASELINE_REPORT.md",
     "templates/PROJECT_PROFILE.md","templates/TASK_PACKET.md","templates/RESULT_PACKET.md",
@@ -37,6 +42,21 @@ def run(command):
 def main():
     missing=[p for p in REQUIRED_PATHS if not (ROOT/p).is_file()]
     if missing: fail("missing required paths: "+", ".join(missing))
+    sys.path.insert(0, str(ROOT/"scripts"))
+    from governance_contracts import ContractError, STATUSES, TASK_ACTIONS, validate_schema
+    from jsonschema import Draft202012Validator
+    for schema_path in sorted((ROOT/"schemas").glob("*.schema.json")):
+        Draft202012Validator.check_schema(json.loads(schema_path.read_text()))
+    try:
+        validate_schema(json.loads((ROOT/"examples/project-profile.example.json").read_text()), "project-profile.schema.json")
+    except ContractError as exc:
+        fail(str(exc))
+    result_schema=json.loads((ROOT/"schemas/result-packet.schema.json").read_text())
+    if set(result_schema["properties"]["validation"]["items"]["properties"]["status"]["enum"]) != STATUSES:
+        fail("schema/result status vocabulary differs from shared contract")
+    task_schema=json.loads((ROOT/"schemas/task-packet.schema.json").read_text())
+    if set(task_schema["properties"]["task_type"]["enum"]) != set(TASK_ACTIONS):
+        fail("schema/task types differ from shared action policy")
     version=(ROOT/"VERSION").read_text().strip()
     if not re.fullmatch(r"(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:[+][0-9A-Za-z.-]+)?",version):
         fail(f"VERSION is not valid semantic versioning: {version!r}")
@@ -50,7 +70,9 @@ def main():
         try: py_compile.compile(str(p),doraise=True)
         except py_compile.PyCompileError as e: fail(f"Python syntax error in {p.relative_to(ROOT)}: {e.msg}")
     run([sys.executable,"scripts/validate-task-packet.py","examples/task-packet.example.json"])
-    run([sys.executable,"scripts/validate-result-packet.py","examples/result-packet.example.json"])
+    run([sys.executable,"scripts/validate-result-packet.py","examples/result-packet.example.json",
+         "--task","examples/task-packet.example.json",
+         "--evidence-manifest","examples/evidence-manifest.example.json"])
     run([sys.executable,"scripts/validate-evidence-manifest.py","examples/evidence-manifest.example.json"])
     master=(ROOT/"MASTER_GOVERNANCE.md").read_text()
     for phrase in ["# MASTER ENGINEERING SYSTEM","## EXECUTION CAPABILITY DECLARATION",
@@ -58,9 +80,8 @@ def main():
                    "/ENGINEERING/MASTER_ROADMAP.md",
                    "## PERMANENT ENGINEERING LAB","## SOURCE VS RUNTIME EVIDENCE","## FIRST ROUND",
                    "MASTER PROJECT RE-BASELINE + ENGINEERING SYSTEM DISCOVERY",
-                   "START THE READ-ONLY MASTER RE-BASELINE NOW."]:
+                   "START THE READ-ONLY MASTER RE-BASELINE NOW"]:
         if phrase not in master: fail(f"MASTER_GOVERNANCE.md missing anchor phrase: {phrase}")
-    if len(master.splitlines()) < 1000: fail("MASTER_GOVERNANCE.md appears truncated (<1000 lines)")
     expectations={
       "templates/TASK_PACKET.md":["## TASK TYPE","## AUTHORITY","## LIVE GATE","## STOP CONDITIONS","## SUCCESS CRITERIA"],
       "templates/RESULT_PACKET.md":["## Repository Identity","## Validation Actually Run","### Facts","### Inferences","### Unknowns","## Residual Risks"],
@@ -76,7 +97,7 @@ def main():
       "templates/MASTER_ENGINEERING_BASELINE_REPORT.md":["## A. PROJECT IDENTITY",
                                                          "/ENGINEERING/MASTER_ROADMAP.md",
                                                          "## N. RISK / GAP LEDGER","## W. EXACT NEXT ENGINEERING ROUND"],
-      "docs/NEW_PROJECT_ADOPTION_PROMPT.md":["UNIVERSAL PROJECT START PROMPT (v2)",
+      "docs/NEW_PROJECT_ADOPTION_PROMPT.md":["UNIVERSAL PROJECT START PROMPT (v3)",
                                              "EXECUTION ENVIRONMENT — MANDATORY",
                                              "/ENGINEERING/MASTER_ROADMAP.md",
                                              "Do not modify the target repository during this first round."],

@@ -108,7 +108,7 @@ def qualify_task_packet_validation(tmp: Path) -> None:
         "missing task field rejected",
         [sys.executable, str(TASK_VALIDATOR), str(missing)],
         1,
-        output_must_contain="missing required fields",
+        output_must_contain="scope",
     )
 
     bad_sha = tmp / "task-bad-sha.json"
@@ -119,7 +119,7 @@ def qualify_task_packet_validation(tmp: Path) -> None:
         "malformed expected SHA rejected",
         [sys.executable, str(TASK_VALIDATOR), str(bad_sha)],
         1,
-        output_must_contain="must look like a Git SHA",
+        output_must_contain="expected_official_head",
     )
 
     requested_not_authorized = tmp / "task-requested-not-authorized.json"
@@ -146,9 +146,15 @@ def qualify_task_packet_validation(tmp: Path) -> None:
     )
 
     protected_with_owner = tmp / "task-protected-with-owner.json"
+    data["action_targets"] = {"merge": "PR:1"}
     data["protected_action_authorizations"]["merge"] = {
         "source": "CURRENT_OWNER_INSTRUCTION",
         "reference": "owner explicitly authorized merge for this bounded task",
+        "authorization_id": "FIXTURE-APPROVAL-1",
+        "status": "ACTIVE",
+        "repository": data["repository"],
+        "target": "PR:1",
+        "boundary": "Merge only the qualified PR:1 after required CI.",
     }
     write_json(protected_with_owner, data)
     expect_code(
@@ -159,46 +165,119 @@ def qualify_task_packet_validation(tmp: Path) -> None:
     )
 
 
+def result_command(path: Path) -> list[str]:
+    # Reviewer/test supplies the approved paths; the result cannot select them.
+    return [sys.executable, str(RESULT_VALIDATOR), str(path),
+            "--task", str(path.parent / "task-packet.example.json"),
+            "--evidence-manifest", str(path.parent / "evidence-manifest.example.json")]
+
+def qualify_task_policy_boundaries(tmp: Path) -> None:
+    def check(name: str, mutate, expected: str, code: int = 1) -> None:
+        data = json.loads(VALID_TASK.read_text(encoding="utf-8"))
+        mutate(data)
+        path = tmp / (name.replace(" ", "-") + ".json")
+        write_json(path, data)
+        expect_code(name, [sys.executable, str(TASK_VALIDATOR), str(path)], code,
+                    output_must_contain=expected)
+
+    check("omitting merge protection cannot authorize merge",
+          lambda d: (d["requested_actions"].append("merge"), d["authorized_actions"].append("merge"),
+                     d.update(protected_actions=[])),
+          "lacks explicit owner authorization")
+    check("read only source mutation rejected",
+          lambda d: d.update(task_type="READ-ONLY DIAGNOSIS", requested_actions=["read", "edit_source"],
+                             authorized_actions=["read", "edit_source"]),
+          "actions prohibited for task type")
+    check("read only report creation accepted",
+          lambda d: d.update(task_type="READ-ONLY DIAGNOSIS", requested_actions=["read", "write_report"],
+                             authorized_actions=["read", "write_report"]),
+          "VALID:", 0)
+    check("runtime source mutation rejected", lambda d: d.update(task_type="RUNTIME QUALIFICATION"),
+          "actions prohibited for task type")
+    check("schema rejects non string action", lambda d: d["authorized_actions"].append({"merge": True}),
+          "schema violation")
+    check("schema rejects abbreviated source SHA", lambda d: d.update(expected_official_head="0123456"),
+          "schema violation")
+
+    approval = json.loads(VALID_TASK.read_text(encoding="utf-8"))
+    approval["requested_actions"].append("merge")
+    approval["authorized_actions"].append("merge")
+    approval["action_targets"] = {"merge": "PR:1"}
+    approval["protected_action_authorizations"]["merge"] = {
+        "source": "OWNER_AUTHORIZATION_RECORD", "reference": "standing owner approval",
+        "authorization_id": "FIXTURE-STANDING-1", "status": "ACTIVE",
+        "repository": approval["repository"], "target": "PR:1",
+        "boundary": "Only PR:1; qualified CI required.",
+    }
+    for name, change, code, expected in (
+        ("standing authorization accepted", {}, 0, "VALID:"),
+        ("revoked authorization rejected", {"status": "REVOKED"}, 1, "not active"),
+        ("wrong authorization target rejected", {"target": "PR:2"}, 1, "target mismatch"),
+        ("wrong authorization repository rejected", {"repository": "other/repo"}, 1, "repository mismatch"),
+        ("expired authorization rejected", {"expires_at": "2000-01-01T00:00:00+00:00"}, 1, "expired"),
+    ):
+        data = json.loads(json.dumps(approval))
+        data["protected_action_authorizations"]["merge"].update(change)
+        path = tmp / (name.replace(" ", "-") + ".json")
+        write_json(path, data)
+        expect_code(name, [sys.executable, str(TASK_VALIDATOR), str(path)], code,
+                    output_must_contain=expected)
+
+
+
 def qualify_result_packet_validation(tmp: Path) -> None:
-    expect_code(
-        "valid result packet accepted",
-        [sys.executable, str(RESULT_VALIDATOR), str(VALID_RESULT)],
-        0,
-        output_must_contain="VALID:",
-    )
+    expect_code("valid result packet accepted", result_command(VALID_RESULT), 0, output_must_contain="VALID:")
+    base = tmp / "result-packets"
+    shutil.copytree(ROOT / "examples", base)
 
-    pass_without_evidence = tmp / "result-pass-without-evidence.json"
-    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
-    data["validation"][0]["evidence"] = []
-    write_json(pass_without_evidence, data)
-    expect_code(
-        "PASS without evidence rejected",
-        [sys.executable, str(RESULT_VALIDATOR), str(pass_without_evidence)],
-        1,
-        output_must_contain="requires meaningful evidence",
-    )
+    def check(name: str, mutate, expected: str, code: int = 1) -> None:
+        data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
+        mutate(data)
+        path = base / (name.replace(" ", "-") + ".json")
+        write_json(path, data)
+        expect_code(name, result_command(path), code, output_must_contain=expected)
 
-    not_run_without_reason = tmp / "result-not-run-without-reason.json"
-    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
-    data["validation"][1].pop("reason")
-    write_json(not_run_without_reason, data)
-    expect_code(
-        "NOT RUN without reason rejected",
-        [sys.executable, str(RESULT_VALIDATOR), str(not_run_without_reason)],
-        1,
-        output_must_contain="requires a reason",
-    )
-
-    performed_without_authority = tmp / "result-performed-without-authority.json"
-    data = json.loads(VALID_RESULT.read_text(encoding="utf-8"))
-    data["actions_actually_performed"].append("merge")
-    write_json(performed_without_authority, data)
-    expect_code(
-        "performed action outside authority rejected",
-        [sys.executable, str(RESULT_VALIDATOR), str(performed_without_authority)],
-        1,
-        output_must_contain="actions actually performed exceed authorization: merge",
-    )
+    check("PASS without evidence rejected", lambda d: d["validation"][0].update(evidence=[]),
+          "requires meaningful evidence")
+    check("NOT RUN without reason rejected", lambda d: d["validation"][1].pop("reason"),
+          "requires a reason")
+    check("performed action outside authority rejected",
+          lambda d: d["actions_actually_performed"].append("merge"),
+          "actions actually performed exceed authorization: merge")
+    check("result self authorization rejected",
+          lambda d: (d["authorized_actions"].append("merge"), d["actions_actually_performed"].append("merge")),
+          "result authorized actions differ")
+    check("missing task reference rejected", lambda d: d.update(task_packet_ref="missing-task.json"),
+          "task packet reference does not match")
+    check("changed approved task hash rejected", lambda d: d.update(task_packet_sha256="0" * 64),
+          "task packet SHA-256 mismatch")
+    check("result task identity mismatch rejected", lambda d: d.update(task_id="OTHER-TASK"),
+          "result does not match approved task: task_id")
+    check("result official source mismatch rejected",
+          lambda d: d.update(verified_remote_official_head="0" * 40),
+          "result official source does not match approved task")
+    check("result typed field rejected", lambda d: d.update(repository=42), "schema violation")
+    check("PASS with nonexistent evidence rejected",
+          lambda d: d["validation"][0].update(evidence=["missing.log"]),
+          "evidence absent from verified manifest")
+    check("evidence source mismatch rejected", lambda d: d.update(exact_tested_head="0" * 40),
+          "evidence manifest does not match result: source_sha")
+    check("UNKNOWN with reason accepted",
+          lambda d: d["validation"].append({"check": "external behavior", "status": "UNKNOWN",
+                                           "evidence": [], "reason": "No external observation."}),
+          "VALID:", 0)
+    check("UNKNOWN without reason rejected",
+          lambda d: d["validation"].append({"check": "external behavior", "status": "UNKNOWN", "evidence": []}),
+          "requires a reason")
+    expect_code("result cannot omit independent approved task",
+                [sys.executable, str(RESULT_VALIDATOR), str(VALID_RESULT)], 2, output_must_contain="--task")
+    artifact = base / "artifacts" / "evidence-fixture.txt"
+    artifact.write_text("corrupted evidence of equal size"[:31], encoding="utf-8")
+    # This payload is deliberately not the bytes accepted by the manifest.
+    path = base / "corrupt-evidence-result.json"
+    write_json(path, json.loads(VALID_RESULT.read_text(encoding="utf-8")))
+    expect_code("result rejects corrupted retained artifact", result_command(path), 1,
+                output_must_contain="SHA-256 mismatch")
 
 
 def qualify_evidence_manifest_validation(tmp: Path) -> None:
@@ -316,6 +395,7 @@ def qualify_project_bootstrap(tmp: Path) -> None:
 
     expected_paths = {
         "AGENTS.md",
+        "governance/GOVERNANCE_LOCK.json",
         "governance/PROJECT_PROFILE.md",
         "governance/project-profile.json",
         "governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
@@ -453,6 +533,69 @@ def qualify_project_bootstrap(tmp: Path) -> None:
         2,
         output_must_contain="repository must use owner/name form",
     )
+
+
+def qualify_governance_lock(tmp: Path) -> None:
+    from unittest.mock import patch
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from governance_lock import source_state
+    with patch("governance_lock.shutil.which", return_value=None):
+        require(source_state(ROOT) == (None, None), "missing Git must not invent source attribution")
+    print("PASS: unavailable Git leaves source attribution unknown")
+    target = tmp / "lock-adoption-target"
+    expect_code("high risk bootstrap accepted",
+                [sys.executable, str(BOOTSTRAP), "--project-name", "High Risk Fixture",
+                 "--repository", "owner/lock-fixture", "--destination", str(target), "--risk-profile", "HIGH"],
+                0, output_must_contain="BOOTSTRAP=PASS")
+    lock_path = target / "governance" / "GOVERNANCE_LOCK.json"
+    original = json.loads(lock_path.read_text())
+    require(original["risk_profile"] == "HIGH", "risk profile missing from lock")
+    profile = json.loads((target / "governance/project-profile.json").read_text())
+    require(profile["risk_profile"] == "HIGH", "risk profile missing from profile")
+    command = [sys.executable, str(ROOT / "scripts/verify-governance-lock.py"), str(lock_path),
+               "--source", str(ROOT)]
+    expect_code("captured governance source hashes accepted", command, 0,
+                output_must_contain="GOVERNANCE_LOCK_INTEGRITY=PASS")
+    modified = json.loads(json.dumps(original))
+    modified["files"]["MASTER_GOVERNANCE.md"] = "0" * 64
+    write_json(lock_path, modified)
+    expect_code("changed governance source hash rejected", command, 1,
+                output_must_contain="source hash mismatch")
+    modified = json.loads(json.dumps(original))
+    modified["files"].pop("scripts/governance_contracts.py")
+    write_json(lock_path, modified)
+    expect_code("incomplete governance source lock rejected", command, 1,
+                output_must_contain="complete required source set")
+    modified = json.loads(json.dumps(original))
+    modified["source_commit_sha"] = None
+    write_json(lock_path, modified)
+    expect_code("draft lock cannot claim clean source qualification",
+                command + ["--require-clean-source"], 1,
+                output_must_contain="clean exact governance source commit is required")
+
+    source_copy = tmp / "clean-reference-fixture"
+    from_source = json.loads(json.dumps(original))
+    for name in original["files"]:
+        destination = source_copy / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / name, destination)
+    git(source_copy, "init", "-b", "main")
+    git(source_copy, "config", "user.email", "qualification@example.invalid")
+    git(source_copy, "config", "user.name", "Governance Qualification")
+    git(source_copy, "add", ".")
+    git(source_copy, "commit", "-m", "fixture: clean reference source")
+    from_source["source_commit_sha"] = git(source_copy, "rev-parse", "HEAD")
+    from_source["observed_git_head_sha"] = from_source["source_commit_sha"]
+    from_source["source_worktree_dirty"] = False
+    write_json(lock_path, from_source)
+    clean_command = [sys.executable, str(ROOT / "scripts/verify-governance-lock.py"), str(lock_path),
+                     "--source", str(source_copy), "--require-clean-source"]
+    expect_code("clean exact adopted source accepted", clean_command, 0,
+                output_must_contain="project_adoption_qualified=no")
+    (source_copy / "UNRELATED.md").write_text("uncommitted fixture state\n")
+    expect_code("dirty reference source cannot pass clean gate", clean_command, 1,
+                output_must_contain="clean exact governance source commit is required")
+
 
 
 def qualify_pr_state_gate(tmp: Path) -> None:
@@ -597,7 +740,7 @@ def qualify_live_gate(tmp: Path) -> None:
 
     expect_code(
         "clean expected repository state accepted",
-        ["bash", str(LIVE_GATE), "main", expected_head, "remote.git"],
+        ["bash", str(LIVE_GATE), "main", expected_head, str(tmp / "live-gate" / "remote.git")],
         0,
         cwd=work,
         output_must_contain="LIVE_GATE=PASS",
@@ -614,7 +757,7 @@ def qualify_live_gate(tmp: Path) -> None:
     git(work, "checkout", "-b", "feature/qualification")
     expect_code(
         "wrong branch stops mutation",
-        ["bash", str(LIVE_GATE), "main", expected_head, "remote.git"],
+        ["bash", str(LIVE_GATE), "main", expected_head, str(tmp / "live-gate" / "remote.git")],
         21,
         cwd=work,
         output_must_contain="STOP: wrong branch",
@@ -624,7 +767,7 @@ def qualify_live_gate(tmp: Path) -> None:
     (work / "README.md").write_text("dirty fixture\n", encoding="utf-8")
     expect_code(
         "dirty worktree stops mutation",
-        ["bash", str(LIVE_GATE), "main", expected_head, "remote.git"],
+        ["bash", str(LIVE_GATE), "main", expected_head, str(tmp / "live-gate" / "remote.git")],
         22,
         cwd=work,
         output_must_contain="STOP: working tree is not clean",
@@ -633,11 +776,39 @@ def qualify_live_gate(tmp: Path) -> None:
     git(work, "reset", "--hard", "HEAD")
     expect_code(
         "unexpected official HEAD stops mutation",
-        ["bash", str(LIVE_GATE), "main", "0" * 40, "remote.git"],
+        ["bash", str(LIVE_GATE), "main", "0" * 40, str(tmp / "live-gate" / "remote.git")],
         23,
         cwd=work,
         output_must_contain="STOP: unexpected official HEAD",
     )
+
+    seed = tmp / "live-gate" / "seed"
+    (seed / "ADVANCE.md").write_text("new official fixture state\n", encoding="utf-8")
+    git(seed, "add", "ADVANCE.md")
+    git(seed, "commit", "-m", "fixture: advance official source")
+    git(seed, "push", "origin", "main")
+    new_head = git(seed, "rev-parse", "HEAD")
+    origin = str(tmp / "live-gate" / "remote.git")
+    expect_code("clean stale local baseline rejected",
+                ["bash", str(LIVE_GATE), "main", new_head, origin], 24, cwd=work,
+                output_must_contain="local HEAD differs")
+    git(work, "merge", "--ff-only", "origin/main")
+    git(work, "config", "user.email", "qualification@example.invalid")
+    git(work, "config", "user.name", "Governance Qualification")
+    (work / "LOCAL.md").write_text("local task state\n", encoding="utf-8")
+    git(work, "add", "LOCAL.md")
+    git(work, "commit", "-m", "fixture: local task")
+    expect_code("clean local baseline ahead rejected",
+                ["bash", str(LIVE_GATE), "main", new_head, origin], 24, cwd=work,
+                output_must_contain="local HEAD differs")
+    git(work, "checkout", "-b", "feature/descendant")
+    expect_code("task descendant source accepted",
+                ["bash", str(LIVE_GATE), "main", new_head, origin, "--task-branch", "feature/descendant"],
+                0, cwd=work, output_must_contain="source_mode=task")
+    expect_code("repository fragment cannot impersonate full identity",
+                ["bash", str(LIVE_GATE), "main", new_head, origin + "-evil",
+                 "--task-branch", "feature/descendant"], 20, cwd=work,
+                output_must_contain="repository identity mismatch")
 
 
 def qualify_secret_scanner(tmp: Path) -> None:
@@ -679,10 +850,12 @@ def main() -> None:
         tmp = Path(td)
         try:
             qualify_task_packet_validation(tmp)
+            qualify_task_policy_boundaries(tmp)
             qualify_result_packet_validation(tmp)
             qualify_evidence_manifest_validation(tmp)
             qualify_environment_gate(tmp)
             qualify_project_bootstrap(tmp)
+            qualify_governance_lock(tmp)
             qualify_pr_state_gate(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)

@@ -6,7 +6,7 @@ This is the navigation entry point for the central, project-agnostic engineering
 
 1. `MASTER_GOVERNANCE.md` — primary Master Engineering System.
 2. `AGENTS.md` — repository-specific maintenance instructions.
-3. `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — Universal Project Start Prompt v2.
+3. `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — Universal Project Start Prompt v3.
 4. `docs/ADOPTION_GUIDE.md` — project adoption and re-baseline process.
 5. `docs/QUICK_START.md` — shortest safe adoption path.
 6. `templates/MASTER_ENGINEERING_BASELINE_REPORT.md` — first-round read-only report.
@@ -61,3 +61,6 @@ The first formal deliverable is the `MASTER ENGINEERING BASELINE REPORT`, contai
 ## Target-project rule
 
 This repository is the **reference**, not the source of live truth for another project. Derive target facts live.
+
+## Version, Risk, and Trust
+Use docs/AUTHORITY_MODEL.md for precedence; live facts are a separate evidence axis. Projects record governance/GOVERNANCE_LOCK.json and review central updates before adoption. Read docs/RISK_PROFILES.md for scoped session deltas and docs/UNTRUSTED_CONTENT_POLICY.md for external content. Active owner authorization persists within its conditions.

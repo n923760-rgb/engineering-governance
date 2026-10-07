@@ -1,20 +1,31 @@
 {
   "task_id": "EXAMPLE-001",
   "task_type": "IMPLEMENTATION",
-  "task_packet_ref": "examples/task-packet.example.json",
+  "task_packet_ref": "task-packet.example.json",
   "executor": "Engineering Executor",
   "execution_environment": "example-development-environment",
   "repository": "owner/example-project",
   "official_branch": "main",
   "verified_remote_official_head": "0123456789abcdef0123456789abcdef01234567",
   "exact_tested_head": "89abcdef0123456789abcdef0123456789abcdef",
-  "authorized_actions": ["read", "modify", "commit", "push"],
-  "actions_actually_performed": ["read", "modify", "commit"],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push"
+  ],
+  "actions_actually_performed": [
+    "read",
+    "modify",
+    "commit"
+  ],
   "validation": [
     {
       "check": "targeted contract test",
       "status": "PASS",
-      "evidence": ["artifact://tests/targeted-contract.txt"]
+      "evidence": [
+        "artifacts/evidence-fixture.txt"
+      ]
     },
     {
       "check": "production deployment",
@@ -23,9 +34,17 @@
       "reason": "Production deployment is outside task authority."
     }
   ],
-  "facts": ["The targeted contract test passed on the exact tested HEAD."],
-  "inferences": ["The bounded defect is corrected within the tested contract."],
+  "facts": [
+    "The targeted contract test passed on the exact tested HEAD."
+  ],
+  "inferences": [
+    "The bounded defect is corrected within the tested contract."
+  ],
   "assumptions": [],
-  "residual_risks": ["Production deployment was not performed."],
-  "recommended_next_action": "Review the bounded diff and merge only if separately authorized."
+  "residual_risks": [
+    "Production deployment was not performed."
+  ],
+  "recommended_next_action": "Review the bounded diff and merge only if separately authorized.",
+  "task_packet_sha256": "77c8e87de0c3ac8ed879c26da8367f529ee6c80574f4bebd06652ff4e7a52cb7",
+  "evidence_manifest_ref": "evidence-manifest.example.json"
 }

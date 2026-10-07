@@ -11,7 +11,12 @@ def main():
     version=(ROOT/"VERSION").read_text().strip()
     if not re.fullmatch(r"(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:[+][0-9A-Za-z.-]+)?",version):
         fail(f"invalid semantic VERSION: {version!r}")
-    required=["AGENTS.md","MASTER_GOVERNANCE.md","templates/MASTER_ENGINEERING_BASELINE_REPORT.md",
+    required=["requirements.txt","scripts/governance_contracts.py",
+              "scripts/governance_lock.py","scripts/verify-governance-lock.py",
+              "scripts/verify-repository-state.py","schemas/governance-lock.schema.json",
+              "docs/RISK_PROFILES.md","docs/GOVERNANCE_VERSIONING.md",
+              "docs/UNTRUSTED_CONTENT_POLICY.md","templates/PROJECT_AGENTS.md",
+              "AGENTS.md","MASTER_GOVERNANCE.md","templates/MASTER_ENGINEERING_BASELINE_REPORT.md",
               "templates/MASTER_ENGINEERING_ROADMAP.md","scripts/bootstrap-project.py",
               "scripts/verify-repository-state.sh","scripts/verify-github-pr-state.py",
               "scripts/verify-environment-capacity.py","scripts/validate-task-packet.py",
@@ -22,7 +27,7 @@ def main():
     master=(ROOT/"MASTER_GOVERNANCE.md").read_text()
     for m in ["# MASTER ENGINEERING SYSTEM","## EXECUTION CAPABILITY DECLARATION",
               "## LIVE TRUTH","## MASTER ENGINEERING ROADMAP","/ENGINEERING/MASTER_ROADMAP.md",
-              "## PERMANENT ENGINEERING LAB","## FIRST ROUND","START THE READ-ONLY MASTER RE-BASELINE NOW."]:
+              "## PERMANENT ENGINEERING LAB","## FIRST ROUND","START THE READ-ONLY MASTER RE-BASELINE NOW"]:
         if m not in master: fail(f"master missing marker: {m}")
     workflow=(ROOT/".github/workflows/governance-ci.yml").read_text()
     for m in ["Verify execution environment capacity","Validate repository contracts",
@@ -38,10 +43,10 @@ def main():
               "preserved_existing","DRAFT_LIVE_VERIFICATION_REQUIRED"]:
         if m not in b: fail(f"bootstrap missing marker: {m}")
     prompt=(ROOT/"docs/NEW_PROJECT_ADOPTION_PROMPT.md").read_text()
-    for m in ["UNIVERSAL PROJECT START PROMPT (v2)","EXECUTION ENVIRONMENT — MANDATORY",
+    for m in ["UNIVERSAL PROJECT START PROMPT (v3)","EXECUTION ENVIRONMENT — MANDATORY",
               "/ENGINEERING/MASTER_ROADMAP.md",
               "Do not modify the target repository during this first round."]:
-        if m not in prompt: fail(f"Universal Project Start Prompt v2 missing marker: {m}")
+        if m not in prompt: fail(f"Universal Project Start Prompt v3 missing marker: {m}")
     print("MASTER_ENGINEERING_SYSTEM_READINESS=PASS")
     print(f"version={version}")
     print("release_tag_created=no")

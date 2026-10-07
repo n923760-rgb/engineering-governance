@@ -18,12 +18,14 @@
     "requested_actions",
     "authorized_actions",
     "protected_actions",
-    "protected_action_authorizations"
+    "protected_action_authorizations",
+    "task_id"
   ],
   "properties": {
     "title": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "task_type": {
       "enum": [
@@ -36,19 +38,22 @@
     },
     "authority": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "repository": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "official_branch": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "expected_official_head": {
       "type": "string",
-      "pattern": "^[0-9a-fA-F]{7,64}$"
+      "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
     },
     "existing_pr": {
       "type": [
@@ -62,28 +67,33 @@
         "string",
         "null"
       ],
-      "pattern": "^[0-9a-fA-F]{7,64}$"
+      "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
     },
     "scope": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "out_of_scope": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "task": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "validation": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "artifacts": {},
     "stop_conditions": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "report_path": {
       "type": [
@@ -93,7 +103,8 @@
     },
     "success_criteria": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "\\S"
     },
     "requested_actions": {
       "type": "array",
@@ -125,15 +136,55 @@
         "type": "object",
         "required": [
           "source",
-          "reference"
+          "reference",
+          "authorization_id",
+          "status",
+          "repository",
+          "target",
+          "boundary"
         ],
         "properties": {
           "source": {
-            "const": "CURRENT_OWNER_INSTRUCTION"
+            "enum": [
+              "CURRENT_OWNER_INSTRUCTION",
+              "OWNER_AUTHORIZATION_RECORD"
+            ]
           },
           "reference": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "authorization_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "status": {
+            "enum": [
+              "ACTIVE",
+              "REVOKED"
+            ]
+          },
+          "repository": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "boundary": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "expires_at": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
           }
         },
         "additionalProperties": false
@@ -145,6 +196,26 @@
         "null"
       ],
       "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "action_targets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "risk_profile": {
+      "enum": [
+        "LIGHT",
+        "STANDARD",
+        "HIGH"
+      ]
     }
   },
   "additionalProperties": true

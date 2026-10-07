@@ -1,31 +1,25 @@
 # Evidence Policy
 
-Important engineering conclusions require attributable evidence.
+Important conclusions require evidence attributable to task, exact source,
+execution environment, time, procedure/result, artifact location, and sensitivity.
 
-Record, where applicable:
-- task identity;
-- source SHA;
-- execution environment;
-- timestamp;
-- command or procedure;
-- result;
-- artifact path;
-- checksum.
+Use schemas/evidence-manifest.schema.json and validate-evidence-manifest.py.
+Retained relative artifacts must exist inside the manifest directory, match their
+byte size and SHA-256, and have no traversal or duplicate paths.
 
-Never fabricate missing evidence. Distinguish Facts, Inferences, and Assumptions.
+Use validate-result-packet.py with a reviewer-selected --task and
+--evidence-manifest. It verifies task bytes/identity/authority, manifest identity,
+and referenced retained artifacts. An arbitrary string or artifact URI is insufficient.
 
-## Evidence Manifest Integrity
+PASS and FAIL require performed checks with attributable retained proof. UNKNOWN,
+BLOCKED, NOT RUN, and SKIPPED require reasons; they may have no execution artifact.
+Do not invent evidence merely to satisfy a schema.
 
-Important file artifacts should use a machine-readable evidence manifest containing:
-- task ID;
-- exact source SHA;
-- execution environment;
-- timezone-aware timestamp;
-- relative artifact path;
-- SHA-256;
-- byte size;
-- sensitive-data flag.
+Capture external CI/API evidence in a sanitized retained artifact, verify the live
+run/response source and status through an available mechanism, and review the claim.
+The validator proves retained-byte integrity, not the honesty or authenticity of
+an executor or external response. Source and fixture tests do not prove runtime behavior.
 
-A manifest is not evidence by itself unless the recorded artifact exists and its size and SHA-256 match the recorded values.
-
-Use `scripts/validate-evidence-manifest.py` for deterministic integrity verification. Missing files, path traversal, size mismatches, and checksum mismatches must fail closed.
+Keep historical evidence attached to its original source. Reuse for a changed
+source only with an explicit applicability justification. Protect accepted/release/
+security evidence and use approved storage for sensitive raw material.
