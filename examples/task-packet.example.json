@@ -13,7 +13,7 @@
   "validation": "Run the smallest deterministic test that proves the contract, then relevant regressions.",
   "artifacts": "Task result and relevant test evidence.",
   "stop_conditions": "Stop on live-state mismatch, authority ambiguity, secret exposure, or scope expansion.",
-  "report_path": ".reports/example-task.md",
+  "report_path": "ENGINEERING/REPORTS/EXAMPLE-001.md",
   "success_criteria": "The confirmed defect is corrected on the exact tested SHA with attributable evidence.",
   "requested_actions": [
     "read",
@@ -38,5 +38,6 @@
     "credential_rotation"
   ],
   "protected_action_authorizations": {},
-  "expected_pr_base": null
+  "expected_pr_base": null,
+  "task_id": "EXAMPLE-001"
 }

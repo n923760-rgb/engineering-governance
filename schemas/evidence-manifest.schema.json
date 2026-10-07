@@ -2,24 +2,64 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Engineering Evidence Manifest",
   "type": "object",
-  "required": ["task_id", "source_sha", "execution_environment", "timestamp", "artifacts"],
+  "required": [
+    "task_id",
+    "source_sha",
+    "execution_environment",
+    "timestamp",
+    "artifacts"
+  ],
   "properties": {
-    "task_id": {"type": "string", "minLength": 1},
-    "source_sha": {"type": "string", "pattern": "^[0-9a-fA-F]{7,64}$"},
-    "execution_environment": {"type": "string", "minLength": 1},
-    "timestamp": {"type": "string", "minLength": 1},
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "source_sha": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})$"
+    },
+    "execution_environment": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
     "artifacts": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["path", "sha256", "size", "sensitive_data"],
+        "required": [
+          "path",
+          "sha256",
+          "size",
+          "sensitive_data"
+        ],
         "properties": {
-          "path": {"type": "string", "minLength": 1},
-          "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
-          "size": {"type": "integer", "minimum": 0},
-          "sensitive_data": {"type": "boolean"},
-          "kind": {"type": "string"}
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sensitive_data": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string"
+          }
         },
         "additionalProperties": true
       }

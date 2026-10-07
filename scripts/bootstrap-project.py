@@ -13,10 +13,16 @@ import re
 import sys
 from pathlib import Path
 
+from governance_contracts import ContractError, PROTECTED_ACTIONS
+from governance_lock import make_lock
+
+ROOT = Path(__file__).resolve().parents[1]
+
 REPOSITORY_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 BRANCH_RE = re.compile(r"^[A-Za-z0-9._/-]+$")
 
 GENERATED_PATHS = (
+    "governance/GOVERNANCE_LOCK.json",
     "governance/PROJECT_PROFILE.md",
     "governance/project-profile.json",
     "governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md",
@@ -56,10 +62,17 @@ def main() -> None:
     parser.add_argument("--destination", required=True)
     parser.add_argument(
         "--governance-source",
-        default="engineering-governance/MASTER_GOVERNANCE.md",
+        default="https://github.com/n923760-rgb/engineering-governance",
+        help="Display label only; the source lock captures actual local reference bytes.",
     )
+    parser.add_argument("--risk-profile", choices=("LIGHT", "STANDARD", "HIGH"), default="STANDARD")
     args = parser.parse_args()
     validate(args.project_name, args.repository, args.official_branch)
+
+    try:
+        lock = make_lock(ROOT, args.risk_profile)
+    except ContractError as exc:
+        fail(str(exc), 2)
 
     destination = Path(args.destination)
     collisions = [destination / rel for rel in GENERATED_PATHS if (destination / rel).exists()]
@@ -86,6 +99,8 @@ def main() -> None:
 
 Status: DRAFT — LIVE VERIFICATION REQUIRED
 Governance baseline: {args.governance_source}
+Adopted source record: governance/GOVERNANCE_LOCK.json
+Risk profile: {args.risk_profile}
 
 ## Project Identity
 PROJECT NAME: {args.project_name}
@@ -147,23 +162,9 @@ Bootstrap scaffolding does not replace the mandatory read-only Master Re-baselin
         "verified_execution_capabilities": [],
         "controller": "Engineering Controller",
         "executor": "Engineering Executor",
-        "protected_actions": [
-            "merge",
-            "release",
-            "tag",
-            "signing",
-            "store_publication",
-            "production_deploy",
-            "dns_changes",
-            "destructive_database_migration",
-            "production_credential_rotation",
-            "server_or_cloud_destruction_or_reinstall",
-            "repository_deletion",
-            "force_push",
-            "history_rewrite",
-            "permanent_release_artifact_deletion",
-            "destructive_billing_or_cloud_resource_actions",
-        ],
+        "protected_actions": sorted(PROTECTED_ACTIONS),
+        "risk_profile": args.risk_profile,
+        "governance_lock": "governance/GOVERNANCE_LOCK.json",
         "test_strategy": "VERIFY_FROM_CURRENT_PROJECT",
         "evidence_location": "ENGINEERING/EVIDENCE/",
         "report_location": "ENGINEERING/REPORTS/",
@@ -173,158 +174,20 @@ Bootstrap scaffolding does not replace the mandatory read-only Master Re-baselin
         "runtime_device_platform_matrix": [],
     }
 
-    agents_md = f"""# Project Engineering Instructions
-
-Project: {args.project_name}
-Repository: {args.repository}
-Official branch: {args.official_branch}
-
-This repository is governed by the central Master Engineering System:
-
-https://github.com/n923760-rgb/engineering-governance
-
-## Authority Order
-
-1. Current explicit owner instruction
-2. This AGENTS.md
-3. Applicable scoped repository instructions
-4. Current MASTER_GOVERNANCE.md from the central governance repository
-5. Project architecture, subsystem, security, release, and engineering contracts
-6. Current live source and verified evidence
-7. Historical reports, roadmap state, prior conversations, and memory
-
-Live repository truth overrides historical memory.
-
-## Execution Capability
-
-At the beginning of every engineering session, verify what execution capabilities actually exist.
-
-Never claim repository access, source inspection, tests, builds, CI checks, runtime work, commits, pushes, merges, deployments, or other execution unless it actually occurred.
-
-Unavailable work must remain BLOCKED, NOT RUN, or UNKNOWN as appropriate.
-
-## Canonical Source
-
-Engineering work must derive from:
-
-current repository
-+ current official branch
-+ current verified HEAD
-
-Before repository mutation, verify repository identity, official branch, current official HEAD, applicable instructions, relevant open Pull Requests, and exact task scope.
-
-## Canonical Project Engineering Storage
-
-Master Roadmap: /ENGINEERING/MASTER_ROADMAP.md
-Reports: /ENGINEERING/REPORTS/
-Evidence: /ENGINEERING/EVIDENCE/
-
-Do not create a competing Master Roadmap elsewhere.
-
-At the beginning of a new session, after live repository verification, read the existing Master Roadmap when present.
-
-## First-Round Rule
-
-A newly adopted or re-baselined project begins with a strictly READ-ONLY Master Project Re-baseline.
-
-During that first round do not edit files, create branches, commit, push, open Pull Requests, merge, modify CI, modify repository settings, deploy, sign, release, or create/update /ENGINEERING/MASTER_ROADMAP.md.
-
-The first round may propose roadmap contents in the Master Engineering Baseline Report.
-
-## Change Policy
-
-Default engineering rule:
-
-ONE CONFIRMED PROBLEM = ONE BRANCH = ONE PULL REQUEST
-
-A coherent bounded feature may also use one branch and one Pull Request.
-
-Do not silently combine unrelated defects, refactoring, cleanup, or architecture changes.
-
-## Implementation Authority
-
-When implementation is explicitly authorized:
-
-1. verify live repository state;
-2. read applicable instructions;
-3. inspect current relevant source;
-4. confirm one bounded problem or feature;
-5. establish causal or requirement evidence;
-6. create an isolated task branch;
-7. prefer an isolated worktree when the environment supports it;
-8. implement the smallest production-correct change;
-9. add focused regression coverage when applicable;
-10. run appropriate validation;
-11. inspect all changed files and the complete diff;
-12. verify no secrets or accidental files;
-13. commit coherently;
-14. push when authorized;
-15. create/update the Pull Request;
-16. inspect CI;
-17. diagnose actual failures from evidence;
-18. leave protected actions to explicit current owner authorization.
-
-## Git Safety
-
-Do not force-push, rewrite published history, destructively reset official history, delete valid shared commits, move published tags, or create unauthorized releases.
-
-Technical access does not equal authorization.
-
-## Protected Actions
-
-Protected actions require explicit current owner authorization when applicable, including:
-
-- merge
-- tag
-- release
-- signing
-- store publication
-- production deployment
-- DNS changes
-- production credential changes
-- secret rotation
-- destructive database migrations
-- destructive server/VPS/cloud operations
-- repository deletion
-- force push/history rewrite
-- permanent release-artifact deletion
-- destructive billing/cloud-resource actions
-- protected product identity changes
-
-Historical or unrelated authorization must not be silently reused.
-
-## Testing Truth
-
-Use only truthful result states:
-
-PASS / FAIL / BLOCKED / UNKNOWN / NOT RUN / SKIPPED
-
-Never report PASS for a check that did not actually execute with attributable evidence.
-
-Green CI does not prove behavior CI did not test.
-
-## Stop Conditions
-
-Stop mutation when repository identity or official branch is uncertain, live HEAD conflicts with assumptions, authority is missing, execution capability is unavailable, secrets may be exposed, scope contains unrelated changes, evidence is insufficient, source changes during implementation, production impact is unclear, runtime qualification is unavailable, or destructive consequences remain unresolved.
-
-State exactly what is missing.
-
-## Final Rule
-
-Protect the working product first.
-
-Evidence before assumptions.
-Live repository before memory.
-One confirmed problem at a time.
-One bounded change at a time.
-One reviewable Pull Request at a time.
-Runtime evidence for runtime claims.
-Never use production users as test subjects.
-"""
+    agents_md = (ROOT / "templates/PROJECT_AGENTS.md").read_text(encoding="utf-8")
+    for marker, value in {
+        "{{PROJECT_NAME}}": args.project_name,
+        "{{REPOSITORY}}": args.repository,
+        "{{OFFICIAL_BRANCH}}": args.official_branch,
+        "{{RISK_PROFILE}}": args.risk_profile,
+    }.items():
+        agents_md = agents_md.replace(marker, value)
 
     repository_rules = f"""# Repository Engineering Instructions
 
 Governance baseline: {args.governance_source}
+Adopted source record: governance/GOVERNANCE_LOCK.json
+Risk profile: {args.risk_profile}
 Repository: {args.repository}
 Official branch: {args.official_branch}
 Status: DRAFT — VERIFY AGAINST LIVE REPOSITORY
@@ -493,6 +356,7 @@ Associate evidence with the exact source SHA and link it from the relevant repor
 """
 
     content = {
+        "governance/GOVERNANCE_LOCK.json": json.dumps(lock, indent=2) + "\n",
         "governance/PROJECT_PROFILE.md": profile_md,
         "governance/project-profile.json": json.dumps(profile, indent=2, sort_keys=True) + "\n",
         "governance/REPOSITORY_ENGINEERING_INSTRUCTIONS.md": repository_rules,

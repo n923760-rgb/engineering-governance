@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased
+## Unreleased — 2.0.0-dev.1
+
+- Enforce an independent minimum protected-action policy and task-type action limits.
+- Bind result packets to independently supplied approved tasks and SHA-256 hashes.
+- Require PASS/FAIL evidence from verified manifests matching task, source, and environment.
+- Require exact local baseline source and exact normalized repository identity; support declared descendant task branches.
+- Use actual Draft 2020-12 schema validation and unify UNKNOWN with other truthful statuses.
+- Record adopted governance source/version/hashes and LIGHT/STANDARD/HIGH risk profiles.
+- Consolidate authority and continuity, standing authorization, sequential agent roles, and untrusted-content policy.
+- Shorten the master and project-start prompt while preserving safety and qualification contracts.
+- Pin GitHub Actions and validation dependencies; retain immutable historical v1.0.0 evidence.
+- Document v1-to-v2 contract migration, existing-project reconciliation and bounded adoption rollback.
+
+### Earlier unreleased evolution
 
 - Automatically create a root `AGENTS.md` during authorized project bootstrap when one does not already exist, while preserving any existing repository-native `AGENTS.md` unchanged.
 - Adopt **Universal Project Start Prompt v2** as the canonical ready-to-use project entry prompt.

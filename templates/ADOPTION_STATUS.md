@@ -58,3 +58,9 @@ Governance baseline: Master Engineering System
 - [ ] Protected actions used explicit owner authorization.
 
 Governance qualification does not mean the product itself is production-qualified.
+
+## Adopted Governance
+Governance lock: governance/GOVERNANCE_LOCK.json
+Risk profile: [LIGHT / STANDARD / HIGH]
+Approved reference source/version/hashes: [VERIFY]
+Central update review: [RECORD WHEN ADOPTING A NEW VERSION]

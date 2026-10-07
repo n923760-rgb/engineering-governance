@@ -3,7 +3,9 @@
 ## Task Identity
 Task ID:
 Task type:
-Task packet reference:
+Task packet reference: [relative to result directory]
+Approved task SHA-256:
+Evidence manifest reference: [relative to result directory]
 Executor:
 Execution environment:
 Started:
@@ -71,3 +73,6 @@ Stop condition reached:
 
 ## Recommended Next Action
 One smallest next engineering action.
+
+## Contract Verification
+The controller supplies --task and --evidence-manifest independently. Verify task hash/identity/authority and manifest task/source/environment. PASS/FAIL evidence cites retained relative paths verified by the manifest. UNKNOWN requires a reason without inventing an execution artifact.

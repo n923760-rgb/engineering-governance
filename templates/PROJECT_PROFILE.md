@@ -52,3 +52,9 @@ RUNTIME / DEVICE / PLATFORM MATRIX:
 All values must be derived from the project's current live environment.
 
 The first Master Re-baseline is read-only. Canonical project files are written only in a later explicitly authorized mutation round.
+
+## Adopted Governance
+Governance lock: governance/GOVERNANCE_LOCK.json
+Risk profile: [LIGHT / STANDARD / HIGH]
+Approved reference source/version/hashes: [VERIFY]
+Central update review: [RECORD WHEN ADOPTING A NEW VERSION]

@@ -1,61 +1,52 @@
-# Adopting the Master Engineering System in Any Project
+# Adopting the Master Engineering System
 
-A target project must derive its own facts from current source and environment.
+## New adoption or material re-baseline
 
-## 1. Verify execution capability
-
-At the beginning of each session, verify the capabilities actually available: real Git/CLI, repository API/MCP, CI, engineering lab/runtime, or advisory-only mode.
-
-Do not claim unavailable actions. Report them as `BLOCKED`, `NOT RUN`, or `UNKNOWN` as appropriate.
-
-## 2. Start with the Master Re-baseline
-
-The first round is read-only. Inspect repository identity, branches/live HEAD, instructions, architecture and subsystem contracts, active PRs, toolchain, product identity, release/signing/deployment structure, source/state ownership, tests/CI, protection/security, runtime evidence, lab requirements, evidence/report/artifact locations, backup/restore, project stop conditions, and an existing `/ENGINEERING/MASTER_ROADMAP.md` if present.
-
-Produce a `MASTER ENGINEERING BASELINE REPORT` before normal implementation.
-
-The report may propose the canonical roadmap state. It must not write that roadmap while the first round remains read-only.
-
-## 3. Establish canonical project engineering storage
-
-In the first later repository-mutation round explicitly authorized for governance adoption, establish or reconcile:
-
-- `/ENGINEERING/MASTER_ROADMAP.md`
-- `/ENGINEERING/REPORTS/`
-- `/ENGINEERING/EVIDENCE/`
-
-Maintain only one roadmap for the project.
-
-The roadmap holds project state, gates, decisions, risks, and exact next round. Detailed report bodies and evidence belong in their dedicated locations and are linked from the roadmap.
-
-## 4. Bootstrap when authorized
+1. Verify actual execution capabilities and live target repository/PR state.
+2. Read applicable target instructions and project contracts.
+3. Inspect current central reference and docs/AUTHORITY_MODEL.md.
+4. Perform the read-only Master Re-baseline and use the baseline-report template.
+5. Read the existing canonical roadmap after source verification; propose missing
+   or changed state without writing it in the read-only round.
+6. In an authorized governance-mutation round, run bootstrap, preserve existing
+   AGENTS.md, record the adopted reference and risk profile, and reconcile project files.
+7. Fill unknown values from actual project facts and qualify applicable environment,
+   CI/protection, secrets, runtime, evidence, and backup/restore requirements.
+8. Exercise a bounded read-only workflow and an isolated implementation workflow.
+   Qualify actual executor tool boundaries separately from JSON fixture tests.
 
 ```bash
-python scripts/bootstrap-project.py \
-  --project-name "Example Project" \
-  --repository "owner/example-project" \
-  --official-branch main \
-  --destination /path/to/example-project
+python -m pip install -r requirements.txt
+python scripts/bootstrap-project.py --project-name "Example Project" \
+  --repository "owner/example-project" --official-branch main \
+  --risk-profile STANDARD --destination /path/to/example-project
 ```
 
-The bootstrap creates root `AGENTS.md` automatically when the target project does not already have one. If an existing `AGENTS.md` is present, preserve it exactly; repository-native authority must not be overwritten by generic scaffolding.
+Generated files are DRAFT — LIVE VERIFICATION REQUIRED. The bootstrap creates
+root AGENTS.md automatically only when absent and preserves an existing file
+exactly. The lock captures actual reference hashes; dirty/non-Git source cannot
+claim a clean source commit.
 
-Generated files are scaffolding, not proof. The bootstrap must not be run as part of the strictly read-only first round.
+## Existing adopted projects
 
-## 5. Qualify the engineering environment
+Read governance/GOVERNANCE_LOCK.json and the existing
+/ENGINEERING/MASTER_ROADMAP.md. Use the session-delta flow in docs/RISK_PROFILES.md.
+Preserve working architecture and authoritative project documents.
 
-Record the actual lab/execution environment, toolchains, paths, resources, artifacts, evidence retention, backups, and runtime limitations. Use a hybrid model when the lab cannot prove required runtime behavior.
+Review central policy updates before adopting them. Update the same lock and
+project authority through an authorized bounded change, retaining previous
+adoption evidence. Never create a competing roadmap.
 
-## 6. Qualify governance
+For projects using v1 packet/validator contracts, follow the migration table in
+docs/GOVERNANCE_VERSIONING.md. Reconcile existing files through a reviewed change;
+bootstrap is a new-adoption scaffold, not an in-place upgrade command.
 
-Prove safe stopping for wrong SHA, dirty source, unauthorized protected action, conflicting PR, missing evidence, unavailable execution capability, environment failure, secret exposure attempt, and scope expansion.
+## Qualification
 
-## 7. First governed work
+QUALIFIED requires the applicable combination of verified identity/source,
+authority, canonical roadmap, tests/CI/protection, execution environment, secret
+boundaries, evidence, recovery, and first governed workflows.
 
-Run one read-only diagnosis end to end, then one small isolated implementation task with exact-source validation.
-
-## 8. Adoption qualification
-
-Mark adoption `QUALIFIED` only when project identity, repository authority, canonical roadmap, CI/tests, environment/lab, secrets, protection state, qualification fixtures, and attributable evidence are proven.
-
-Governance qualification does not mean the product itself is production-qualified.
+A passing source-lock or fixture test does not qualify the product or an AI
+executor. Missing settings access, physical devices, or external services remain
+accurately classified. Do not block unrelated authorized work unnecessarily.

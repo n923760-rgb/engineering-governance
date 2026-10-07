@@ -1,5 +1,8 @@
 # Engineering Task Packet
 
+## TASK ID
+[Stable task identity shared by approved task, result, and evidence.]
+
 ## TITLE
 [One atomic engineering outcome]
 
@@ -17,11 +20,13 @@ Requested actions:
 Authorized actions:
 Protected actions:
 Protected action authorizations:
+Action targets:
+Risk profile: LIGHT / STANDARD / HIGH
 
 Rules:
 - every requested action must be present in Authorized actions;
-- protected actions may appear in Authorized actions only when the current owner explicitly authorized them;
-- each authorized protected action must record source = CURRENT_OWNER_INSTRUCTION and a non-empty reference;
+- the central protected-action minimum cannot be removed by this packet; active owner authorization is required;
+- each protected action records source/reference, authorization_id, active status, repository, target, boundary, and optional expiry;
 - do not infer protected authorization from implementation authority.
 
 ## REPOSITORY
@@ -76,3 +81,5 @@ Before mutation:
 
 ## SUCCESS CRITERIA
 [Observable state that proves completion.]
+
+Task-type action limits apply independently of the packet's lists. Supply this controller-approved packet independently to the result validator; the executor cannot replace it with its own approval.

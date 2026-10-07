@@ -1,101 +1,80 @@
 # Master Engineering System
 
-A reusable, project-agnostic engineering operating system for AI-assisted production software engineering.
+A reusable, project-agnostic operating system for AI-assisted production engineering.
 
-This repository is the **central reference for all software projects**. It is not tied to any one product, framework, platform, repository, cloud provider, lab provider, or execution environment.
+## Start here
 
-## Primary authority
+- MASTER_GOVERNANCE.md — primary policies.
+- docs/AUTHORITY_MODEL.md — instruction precedence, facts, and approved inputs.
+- docs/NEW_PROJECT_ADOPTION_PROMPT.md — Universal Project Start Prompt v3.
+- docs/QUICK_START.md and docs/ADOPTION_GUIDE.md — adoption and continuation.
+- docs/RISK_PROFILES.md — LIGHT / STANDARD / HIGH and scoped blockers.
+- docs/GOVERNANCE_VERSIONING.md — adopted source/version tracking.
+- docs/UNTRUSTED_CONTENT_POLICY.md — external content and agent boundaries.
 
-- `MASTER_GOVERNANCE.md` — the Master Engineering System.
-- `GLOBAL_REFERENCE.md` — compact navigation and adoption entry point.
-- `AGENTS.md` — repository-specific instructions for maintaining this reference.
-- `docs/NEW_PROJECT_ADOPTION_PROMPT.md` — **Universal Project Start Prompt v2**, the ready-to-use project entry prompt.
-- `docs/ADOPTION_GUIDE.md` — adoption for new and existing projects.
-- `docs/QUICK_START.md` — shortest safe adoption path.
-- `templates/MASTER_ENGINEERING_ROADMAP.md` — canonical roadmap template.
-- `templates/MASTER_ENGINEERING_BASELINE_REPORT.md` — first-round read-only re-baseline report.
+The live target repository establishes product facts. Owner instructions and
+project contracts define intended behavior and authority. Historical memory is context.
 
-## Core operating rule
+## Development state
 
-**Live repository truth → governance → one Master Roadmap → bounded task → isolated execution → validation → evidence → review → protected decision**
+VERSION is the current development version. 2.0.0-dev.1 is an unreleased evolution
+with incompatible validator/packet contracts. Published v1.0.0 remains immutable
+historical evidence. No development update creates a release or tag.
 
-The target project's current repository and environment remain the source of truth. Historical chats, AI memory, old Pull Requests, archived SHAs, screenshots, copied configs, and another project's governance files are context only.
+## Adopt or continue
 
-## Execution capability first
+First adoption or a material re-baseline starts read-only and uses
+templates/MASTER_ENGINEERING_BASELINE_REPORT.md. Propose roadmap state without
+writing target files in that round. Ordinary sessions use the existing roadmap
+and a scoped delta.
 
-Every session must verify what it can actually do before claiming repository access or execution.
-
-Typical modes include a real Git/CLI environment, a repository API/MCP connector, external CI, a qualified engineering lab, or advisory-only chat.
-
-Unavailable actions are reported as `BLOCKED`, `NOT RUN`, or `UNKNOWN`; they are never simulated.
-
-## First round for every adopted project
-
-Start with a **READ-ONLY MASTER RE-BASELINE**.
-
-Verify live repository state, architecture, source ownership, build/release model, tests, CI, security/privacy boundaries, runtime evidence, governance gaps, engineering-lab requirements, and any existing canonical roadmap.
-
-Do not mutate source or create/update the roadmap during this first round.
-
-The first formal output is a `MASTER ENGINEERING BASELINE REPORT`, including a proposed roadmap state.
-
-## Canonical target-project engineering storage
-
-Every adopted target project uses one fixed convention:
-
-- `/ENGINEERING/MASTER_ROADMAP.md` — single permanent project roadmap.
-- `/ENGINEERING/REPORTS/` — detailed engineering reports.
-- `/ENGINEERING/EVIDENCE/` — evidence indexes/metadata and retained evidence as appropriate.
-
-The central governance repository owns reusable rules. The target repository owns its project-specific roadmap and evidence history.
-
-## How every project uses this reference
-
-1. Verify the actual execution mode for the current session.
-2. Start with the read-only Master Re-baseline.
-3. Derive project identity, branch, live HEAD, authority, CI, toolchain, tests, runtime matrix, release model, and protected actions from live facts.
-4. Read `/ENGINEERING/MASTER_ROADMAP.md` if it already exists.
-5. Produce the Baseline Report and propose the roadmap state without writing during the read-only round.
-6. In a later explicitly authorized governance-mutation round, bootstrap or establish the project governance files and canonical `ENGINEERING/` structure.
-7. Qualify the execution environment/lab that will execute work.
-8. For each implementation task, issue one bounded Task Packet.
-9. Prefer isolated branches/worktrees when the actual execution mode supports them.
-10. Validate with the smallest deterministic proof first, then affected regressions.
-11. Produce attributable Result Packets, reports, and evidence.
-12. Perform protected actions only with explicit current owner authorization.
-
-## Bootstrap
-
-Run the bootstrap only after the read-only baseline when repository mutation is explicitly authorized:
+During authorized bootstrap:
 
 ```bash
+python -m pip install -r requirements.txt
 python scripts/bootstrap-project.py \
-  --project-name "Example Project" \
-  --repository "owner/example-project" \
-  --official-branch main \
-  --destination /path/to/example-project
+  --project-name "Example Project" --repository "owner/example-project" \
+  --official-branch main --risk-profile STANDARD --destination /path/to/example-project
 ```
 
-The bootstrap also creates a root `AGENTS.md` automatically for a project that does not already have one. If the project already has `AGENTS.md`, it is preserved exactly and is not overwritten.
+The bootstrap creates AGENTS.md from templates/PROJECT_AGENTS.md when none exists,
+preserves existing AGENTS.md exactly, and creates draft project profile/environment
+records and governance/GOVERNANCE_LOCK.json. It does not qualify a project.
 
-The generated governance and `ENGINEERING/` files are **DRAFT — LIVE VERIFICATION REQUIRED**. Scaffolding is not proof.
+Target projects retain one /ENGINEERING/MASTER_ROADMAP.md, detailed reports in
+/ENGINEERING/REPORTS/, and evidence metadata in /ENGINEERING/EVIDENCE/.
 
-## Never copy between projects
+Record the reference source and hashes. Review newer central changes before
+adopting them; central main must not silently replace an existing project's policy.
 
-Do not copy repository SHAs, server identities, credentials, secret values, paths, CI identities, infrastructure details, test counts, production topology, backup destinations, runtime assumptions, or historical product decisions from another project.
+## Validate contracts
 
-## Protected actions
+Python 3.12 is the qualified CI toolchain. Install the pinned requirements first.
 
-Protected actions normally require explicit current owner authorization. Typical examples include merge, release, tag, signing, store publication, production deployment, DNS changes, destructive database migration, production credential rotation, server/cloud destruction or reinstall, repository deletion, branch-history rewrite, permanent release-artifact deletion, and destructive billing/cloud-resource actions.
+```bash
+python scripts/validate-repository.py
+python qualification/run-qualification.py
+python scripts/verify-system-readiness.py
+python scripts/validate-task-packet.py examples/task-packet.example.json
+python scripts/validate-result-packet.py examples/result-packet.example.json \
+  --task examples/task-packet.example.json \
+  --evidence-manifest examples/evidence-manifest.example.json
+```
 
-Technical access does not equal authorization.
+The controller supplies approved task/evidence paths independently. Results bind
+to task hashes and manifest task/source/environment identity. PASS/FAIL cites
+verified retained bytes. UNKNOWN requires a reason and never becomes PASS.
 
-## Validation vocabulary
+Validators check contracts and file integrity; they do not authenticate owners,
+sandbox executors, or establish that a command was honestly run. Tool permissions,
+trusted issuance, live attribution, and review remain necessary.
 
-`PASS` / `FAIL` / `BLOCKED` / `UNKNOWN` / `NOT RUN` / `SKIPPED`
+## Safety and autonomy
 
-## Release state
+Use one bounded problem/coherent change per branch and PR. Keep protected actions
+within explicit active owner authorization, including standing authorization that
+still meets its scope and conditions. Technical access is not authorization.
 
-Stable published historical release: `v1.0.0`.
-
-The `v1.0.0` tag and GitHub Release are immutable evidence. Current `main` may contain unreleased evolution of the Master Engineering System. A future release requires a separate explicit owner decision and exact-source qualification.
+Never expose secrets, rewrite shared history for convenience, move published
+release tags, or use missing verification as success. Stop the dependent action
+when a real boundary is unresolved; continue independent authorized work.

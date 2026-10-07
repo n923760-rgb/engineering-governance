@@ -35,3 +35,9 @@ Canonical location: `/ENGINEERING/REPORTS/`
 ## Operational Dashboards / Logs
 
 Reverify live HEAD, active PRs, runtime state, execution capabilities, and temporary infrastructure details instead of freezing them here.
+
+## Adopted Governance
+Governance lock: governance/GOVERNANCE_LOCK.json
+Risk profile: [LIGHT / STANDARD / HIGH]
+Approved reference source/version/hashes: [VERIFY]
+Central update review: [RECORD WHEN ADOPTING A NEW VERSION]

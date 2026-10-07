@@ -4,7 +4,7 @@ Status: CURRENT SOURCE QUALIFICATION CONTRACT
 
 This document defines source-level readiness for this reference repository. It does not claim that any target product is production-qualified.
 
-Required capabilities include the primary Master Engineering System, repository-native authority, the Universal Project Start Prompt v2, verified execution-mode declaration, safe post-baseline bootstrap, read-only Master Re-baseline guidance, Master Baseline Report and Master Roadmap templates, live repository/PR gates, environment/lab gate, Task/Result/Evidence validation, secret scanning, adversarial stop-condition qualification, Governance CI, and exact-source identity reporting.
+Required capabilities include the primary Master Engineering System, repository-native authority, the Universal Project Start Prompt v3, verified execution-mode declaration, safe post-baseline bootstrap, read-only Master Re-baseline guidance, Master Baseline Report and Master Roadmap templates, live repository/PR gates, environment/lab gate, Task/Result/Evidence validation, secret scanning, adversarial stop-condition qualification, Governance CI, and exact-source identity reporting.
 
 The current master must preserve:
 

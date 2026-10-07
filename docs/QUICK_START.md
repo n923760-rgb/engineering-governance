@@ -1,39 +1,22 @@
 # Quick Start — Master Engineering System
 
-## New or existing project
+For a new project or material re-baseline, verify capabilities/source and run a
+read-only baseline. Use templates/MASTER_ENGINEERING_BASELINE_REPORT.md. Propose
+/ENGINEERING/MASTER_ROADMAP.md without writing it in that round.
 
-1. Identify the target repository.
-2. Verify the actual execution mode available in the current session.
-3. Start in **READ-ONLY** mode.
-4. Perform the Master Re-baseline: repository identity/live state, authority, architecture/source ownership, build/release model, tests/CI, security/privacy, runtime evidence, governance gaps, existing roadmap, and lab/toolchain requirements.
-5. Produce one `MASTER ENGINEERING BASELINE REPORT`.
-6. If `/ENGINEERING/MASTER_ROADMAP.md` exists, read it after live truth verification; if it does not, propose its initial contents in the report.
-7. Do **not** create/update the roadmap during the read-only round.
-8. In a later explicitly authorized governance-mutation round, bootstrap or establish:
-   - root `AGENTS.md` automatically when none exists; preserve an existing one
-   - `/ENGINEERING/MASTER_ROADMAP.md`
-   - `/ENGINEERING/REPORTS/`
-   - `/ENGINEERING/EVIDENCE/`
-   - repository governance/profile/environment files.
-9. Fill placeholders only from live target-project facts.
-10. Qualify the execution environment / engineering lab.
-11. Prove governance stop conditions fail closed.
-12. Begin normal engineering with bounded Task Packets and attributable Result Packets.
+For an already adopted project, verify live state, read its adopted lock and
+existing roadmap, then inspect only relevant changes and contracts. A new session
+does not restart adoption.
 
-## Existing projects
+Install requirements.txt before running validators. Run bootstrap only in an
+authorized mutation round; it preserves existing AGENTS.md and generates draft
+governance files, the version/source lock, roadmap, reports, and evidence locations.
 
-Do not rewrite working architecture merely to fit governance. Reuse authoritative project documentation where it already owns a subject and add only missing governance layers.
+Use docs/AUTHORITY_MODEL.md, docs/RISK_PROFILES.md, and
+docs/UNTRUSTED_CONTENT_POLICY.md. Keep protected actions within active owner
+authorization; do not ask again when its exact scope and conditions still apply.
 
-Never create a second roadmap for the same project.
+Validate a result with independently supplied --task and --evidence-manifest.
+Never accept a result's own permission list or nonexistent evidence as proof.
 
-## Before every source mutation
-
-Verify live repository state and actual execution capability again.
-
-## Before every protected action
-
-Verify explicit current owner authorization for that exact action and scope.
-
-## Validation vocabulary
-
-`PASS` / `FAIL` / `BLOCKED` / `UNKNOWN` / `NOT RUN` / `SKIPPED`
+PASS / FAIL / BLOCKED / UNKNOWN / NOT RUN / SKIPPED

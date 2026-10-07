@@ -62,6 +62,7 @@ All Git repositories, evidence artifacts, and secret-like values used by the sui
 ## Run
 
 ```bash
+python -m pip install -r requirements.txt
 python qualification/run-qualification.py
 ```
 
@@ -72,3 +73,15 @@ PASS: governance qualification suite completed
 ```
 
 The baseline governance safety gates are now covered by deterministic qualification. Project-specific runtime contracts remain the responsibility of each adopted project.
+
+## Hardened contracts
+
+Additional adversarial coverage includes task-type action limits, minimum protected
+actions omitted by a packet, standing/revoked/expired/wrong-target approval,
+independent approved-task binding, result self-authorization, missing/tampered
+retained evidence, manifest source identity, UNKNOWN handling, full source SHAs,
+stale/ahead local baselines, declared task descendants, exact repository identity,
+governance source hashes/coverage, and dirty/clean reference qualification.
+
+Fixtures qualify these validator contracts only. They do not authenticate owners,
+prove actual AI-agent resistance to prompt injection, or qualify product runtime.
