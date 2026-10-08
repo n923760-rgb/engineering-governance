@@ -2,6 +2,8 @@
 
 ## Unreleased — 2.0.0-dev.1
 
+- Exercise complete read-only and isolated implementation workflows with real Git commits, actual command output, retained evidence binding, replay rejection and changed-source stops.
+
 - Enforce an independent minimum protected-action policy and task-type action limits.
 - Bind result packets to independently supplied approved tasks and SHA-256 hashes.
 - Require PASS/FAIL evidence from verified manifests matching task, source, and environment.
