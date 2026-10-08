@@ -7,6 +7,10 @@ This AGENTS.md owns repository-local maintenance safety. Scoped contracts refine
 their own area without widening owner permission or silently weakening these rules.
 Active owner authorization persists within its recorded scope and conditions.
 
+Maintenance of this repository is reference-only. It does not authorize selecting,
+adopting, or modifying a target project. Target adoption requires an explicitly
+identified project and owner authorization within that project's task scope.
+
 Before mutation, verify repository identity, official branch, live official HEAD, open/conflicting Pull Requests, applicable instructions, and exact task scope.
 
 Repository rules:

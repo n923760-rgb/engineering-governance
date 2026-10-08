@@ -1,5 +1,21 @@
 # Quick Start — Master Engineering System
 
+## استخدام المرجع لاحقًا
+
+هذا المستودع مرجع رئيسي عام فقط؛ مراجعته أو تحديثه لا يطبّق الحوكمة تلقائيًا
+على أي مشروع. عند الرغبة في التطبيق، افتح دردشة المشروع وحدد مستودعه، ثم استخدم
+docs/NEW_PROJECT_ADOPTION_PROMPT.md مع رابط المشروع المستهدف.
+
+ابدأ بمراجعة المصدر الحي وتعليمات المشروع والتقرير المطلوب دون تعديل المشروع.
+بعد مراجعة النتيجة، يكون أي اعتماد أو تعديل ضمن التفويض الصريح الخاص بالمشروع.
+احتفظ بإصداره المعتمد؛ لا تستبدله تلقائيًا كلما تغيّر المرجع الرئيسي.
+
+جاهزية مصدر المرجع لا تعني تأهيل المشروع أو أدوات الذكاء الاصطناعي أو إصدارًا
+مستقرًا جديدًا. لكل منها أدلته وقراره المنفصل، ولا يلزم حل عائق تشغيل مشروع
+للاستفادة من قواعد المرجع في أعمال أخرى مستقلة ومصرّح بها.
+
+## Adoption and continuation
+
 For a new project or material re-baseline, verify capabilities/source and run a
 read-only baseline. Use templates/MASTER_ENGINEERING_BASELINE_REPORT.md. Propose
 /ENGINEERING/MASTER_ROADMAP.md without writing it in that round.

@@ -7,6 +7,11 @@ TARGET_REPOSITORY_URL:
 ضع رابط مستودع المشروع أعلاه. اكتشف الفرع والمصدر والحالة الحالية من المستودع؛
 لا تنقل SHA أو إعدادات أو قرارات من مشروع آخر.
 
+Apply this prompt only to the target explicitly identified for the current project
+task. If no target is identified, remain in reference-only scope; do not select a
+project from unrelated history. Adoption and target mutations require applicable
+owner authorization and remain separate from maintaining the central reference.
+
 ## EXECUTION ENVIRONMENT — MANDATORY
 
 تحقق من القدرات الفعلية: Git/CLI، واجهة المستودع، CI، بيئة تشغيل، أو استشارة فقط.
