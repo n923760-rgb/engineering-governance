@@ -15,6 +15,18 @@ A reusable, project-agnostic operating system for AI-assisted production enginee
 The live target repository establishes product facts. Owner instructions and
 project contracts define intended behavior and authority. Historical memory is context.
 
+## Reference-only scope
+
+This repository is the general master reference, not a project orchestrator.
+Maintaining it does not select, bootstrap, or change any target repository.
+Adopt it later within an explicitly identified project's authorized task, using
+that project's live source and native instructions. Do not infer adoption authority
+from a repository remembered in history or from access to a connected account.
+
+For a concise handoff to a project's conversation, use docs/QUICK_START.md and
+docs/NEW_PROJECT_ADOPTION_PROMPT.md. Source readiness, project adoption, executor
+qualification and stable release are separate decisions; none implies the others.
+
 ## Development state
 
 VERSION is the current development version. 2.0.0-dev.1 is an unreleased evolution

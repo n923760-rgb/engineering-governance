@@ -21,6 +21,12 @@ governance/GOVERNANCE_LOCK.json. Existing projects use their approved adopted
 version. Review central updates before changing effective project policy.
 See docs/GOVERNANCE_VERSIONING.md.
 
+This central repository is a reference, not an automatic project orchestrator.
+Maintaining it does not authorize selecting or changing a target project. Adopt
+it only within an explicitly identified project's owner-authorized task, using
+that project's live source and native contracts. Keep reference source readiness,
+target adoption, executor qualification, and release decisions separate.
+
 The owner retains authority for protected decisions. An active standing
 authorization remains applicable within its recorded target, scope, boundaries,
 conditions, expiry, and revocation state. A new session alone does not revoke it.

@@ -2,6 +2,8 @@
 
 ## Unreleased — 2.0.0-dev.1
 
+- Clarify reference-only maintenance, explicit target-project adoption scope and the separate source/adoption/executor/release decisions; add a concise Arabic handoff guide.
+
 - Exercise complete read-only and isolated implementation workflows with real Git commits, actual command output, retained evidence binding, replay rejection and changed-source stops.
 
 - Enforce an independent minimum protected-action policy and task-type action limits.
