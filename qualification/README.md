@@ -85,3 +85,22 @@ governance source hashes/coverage, and dirty/clean reference qualification.
 
 Fixtures qualify these validator contracts only. They do not authenticate owners,
 prove actual AI-agent resistance to prompt injection, or qualify product runtime.
+
+## Complete controlled workflows
+
+The same suite also runs a real disposable Git workflow, rather than relying only
+on prewritten example results:
+
+- a read-only diagnosis reproduces a failing assertion, retains its actual output,
+  and produces a valid FAIL result without changing tracked source or HEAD;
+- a separately approved implementation corrects only the synthetic source in an
+  isolated worktree, commits it, executes the assertion, and binds its PASS result
+  to the actual tested commit and retained command output;
+- the diagnosis branch and official fixture main remain unchanged by remediation;
+- evidence replay from the diagnosis into implementation is rejected;
+- an independently advanced official fixture HEAD blocks dependent continuation.
+
+Tasks and evidence are prepared and supplied by the deterministic fixture harness.
+This exercises the CLI integration and attribution contracts; it does not make the
+harness an independent reviewer, authenticate a human owner, or test a real AI
+executor's tool-permission isolation. Those remain separate qualification gates.

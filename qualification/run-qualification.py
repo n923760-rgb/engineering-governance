@@ -2,12 +2,14 @@
 """Adversarial qualification tests for governance safety, authority, evidence, and environment gates."""
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_GATE = ROOT / "scripts" / "verify-repository-state.sh"
@@ -843,6 +845,157 @@ def qualify_secret_scanner(tmp: Path) -> None:
     )
 
 
+def qualify_complete_workflows(tmp: Path) -> None:
+    """Exercise real Git/commands and bound evidence, not an AI-agent sandbox."""
+    fixture = tmp / "workflow-fixture"
+    fixture.mkdir()
+    work, _ = build_live_gate_fixture(fixture)
+    seed, remote = fixture / "seed", fixture / "remote.git"
+    original_source = "def value():\n    return 1\n"
+    corrected_source = "def value():\n    return 2\n"
+    (seed / "app.py").write_text(original_source, encoding="utf-8")
+    git(seed, "add", "app.py")
+    git(seed, "commit", "-m", "fixture: reproducible contract defect")
+    git(seed, "push", "origin", "main")
+    git(work, "fetch", "origin")
+    git(work, "merge", "--ff-only", "origin/main")
+    baseline = git(work, "rev-parse", "HEAD")
+    environment = "local-disposable-git-workflow-fixture"
+    contract_test = [sys.executable, "-B", "-c", "from app import value; assert value() == 2"]
+    approved_hashes: dict[str, str] = {}
+
+    def task_packet(directory: Path, task_id: str, task_type: str, actions: list[str]) -> dict:
+        directory.mkdir()
+        task = json.loads(VALID_TASK.read_text(encoding="utf-8"))
+        task.update({
+            "task_id": task_id, "title": "Controlled workflow qualification",
+            "task_type": task_type, "repository": str(remote),
+            "expected_official_head": baseline, "risk_profile": "STANDARD",
+            "authority": "Fixture controller authorizes only the listed actions in this disposable repository.",
+            "scope": "Diagnose or correct the synthetic value() contract only.",
+            "out_of_scope": "Real repositories, external network, merge, release, deployment, and credentials.",
+            "task": "Prove the synthetic contract and retain attributable command output.",
+            "validation": "Run the real source gate and the deterministic value() assertion.",
+            "stop_conditions": "Stop dependent work on source mismatch or invalid authority/evidence.",
+            "success_criteria": "Report the actual assertion outcome on the exact tested source.",
+            "report_path": None, "requested_actions": actions, "authorized_actions": actions,
+            "protected_action_authorizations": {},
+        })
+        write_json(directory / "approved-task.json", task)
+        approved_hashes[task_id] = hashlib.sha256((directory / "approved-task.json").read_bytes()).hexdigest()
+        expect_code(f"{task_id} approved task accepted",
+                    [sys.executable, str(TASK_VALIDATOR), str(directory / "approved-task.json")], 0)
+        return task
+
+    def capture(directory: Path, name: str, command: list[str], cwd: Path, code: int) -> str:
+        observed = run(command, cwd)
+        require(observed.returncode == code,
+                f"workflow command {name}: expected {code}, got {observed.returncode}\n{observed.stderr}")
+        relative = name + ".json"
+        write_json(directory / relative, {
+            "command": command, "cwd": str(cwd), "exit_code": observed.returncode,
+            "stdout": observed.stdout, "stderr": observed.stderr,
+            "observed_source_sha": git(cwd, "rev-parse", "HEAD"),
+        })
+        return relative
+
+    def complete(directory: Path, task: dict, tested: str, checks: list[dict], facts: list[str]) -> None:
+        require(hashlib.sha256((directory / "approved-task.json").read_bytes()).hexdigest()
+                == approved_hashes[task["task_id"]], "approved task changed after fixture issuance")
+        artifacts = sorted({name for check in checks for name in check["evidence"]})
+        manifest = {
+            "task_id": task["task_id"], "source_sha": tested,
+            "execution_environment": environment,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "artifacts": [{
+                "path": name,
+                "sha256": hashlib.sha256((directory / name).read_bytes()).hexdigest(),
+                "size": (directory / name).stat().st_size, "sensitive_data": False,
+            } for name in artifacts],
+        }
+        write_json(directory / "evidence-manifest.json", manifest)
+        result = {
+            "task_id": task["task_id"], "task_type": task["task_type"],
+            "task_packet_ref": "approved-task.json",
+            "task_packet_sha256": approved_hashes[task["task_id"]],
+            "executor": "deterministic fixture harness (not an AI executor)",
+            "execution_environment": environment, "repository": task["repository"],
+            "official_branch": "main", "verified_remote_official_head": baseline,
+            "exact_tested_head": tested, "authorized_actions": task["authorized_actions"],
+            "actions_actually_performed": task["requested_actions"], "validation": checks,
+            "facts": facts, "inferences": [], "assumptions": [],
+            "residual_risks": ["No real AI-agent isolation or product runtime was qualified."],
+            "recommended_next_action": "Review fixture evidence; no merge or release is authorized.",
+            "evidence_manifest_ref": "evidence-manifest.json",
+        }
+        write_json(directory / "result.json", result)
+        expect_code(f"{task['task_id']} complete result and retained evidence accepted",
+                    [sys.executable, str(RESULT_VALIDATOR), str(directory / "result.json"),
+                     "--task", str(directory / "approved-task.json"),
+                     "--evidence-manifest", str(directory / "evidence-manifest.json")], 0)
+
+    diagnosis = tmp / "workflow-diagnosis"
+    diagnostic_actions = ["read", "inspect_source", "run_validation", "write_report"]
+    task = task_packet(diagnosis, "WORKFLOW-DIAGNOSIS", "READ-ONLY DIAGNOSIS", diagnostic_actions)
+    require((work / "app.py").read_text() == original_source, "diagnosis fixture source mismatch")
+    gate = capture(diagnosis, "source-gate", ["bash", str(LIVE_GATE), "main", baseline, str(remote)], work, 0)
+    assertion = capture(diagnosis, "contract-test", contract_test, work, 1)
+    require(git(work, "rev-parse", "HEAD") == baseline and not git(work, "status", "--porcelain"),
+            "read-only workflow changed source or repository state")
+    complete(diagnosis, task, baseline, [
+        {"check": "exact baseline source gate", "status": "PASS", "evidence": [gate]},
+        {"check": "actual contract reproduction", "status": "FAIL", "evidence": [assertion]},
+    ], ["The real assertion failed; diagnosis did not remediate or change source."])
+    print("PASS: complete read-only workflow preserves source and reports actual FAIL")
+
+    implementation = tmp / "workflow-implementation"
+    actions = diagnostic_actions + ["modify", "edit_source", "commit"]
+    task = task_packet(implementation, "WORKFLOW-IMPLEMENTATION", "IMPLEMENTATION", actions)
+    executor = tmp / "workflow-executor"
+    git(work, "config", "user.email", "qualification@example.invalid")
+    git(work, "config", "user.name", "Governance Qualification")
+    git(work, "worktree", "add", "-b", "feature/workflow-fixture", str(executor), baseline)
+    gate_command = ["bash", str(LIVE_GATE), "main", baseline, str(remote),
+                    "--task-branch", "feature/workflow-fixture"]
+    preflight = capture(implementation, "preflight", gate_command, executor, 0)
+    (executor / "app.py").write_text(corrected_source, encoding="utf-8")
+    require(git(executor, "diff", "--name-only") == "app.py", "implementation escaped its bounded source scope")
+    git(executor, "add", "app.py")
+    git(executor, "commit", "-m", "fixture: correct synthetic contract")
+    tested = git(executor, "rev-parse", "HEAD")
+    assertion = capture(implementation, "contract-test", contract_test, executor, 0)
+    gate = capture(implementation, "source-gate", gate_command, executor, 0)
+    require(tested != baseline and not git(executor, "status", "--porcelain"),
+            "implementation must test an exact clean changed commit")
+    require(git(work, "rev-parse", "HEAD") == baseline and not git(work, "status", "--porcelain")
+            and git(remote, "rev-parse", "refs/heads/main") == baseline,
+            "isolated implementation changed official or diagnosis source")
+    complete(implementation, task, tested, [
+        {"check": "pre-mutation source gate", "status": "PASS", "evidence": [preflight]},
+        {"check": "declared descendant source gate", "status": "PASS", "evidence": [gate]},
+        {"check": "actual corrected contract", "status": "PASS", "evidence": [assertion]},
+    ], ["The assertion passed on the exact committed correction; official main was not changed."])
+    print("PASS: complete isolated implementation binds actual PASS to approved task and tested commit")
+
+    replay = json.loads((implementation / "result.json").read_text())
+    replay["evidence_manifest_ref"] = "../workflow-diagnosis/evidence-manifest.json"
+    write_json(implementation / "replayed-result.json", replay)
+    expect_code("complete workflow rejects evidence replay from diagnosis",
+                [sys.executable, str(RESULT_VALIDATOR), str(implementation / "replayed-result.json"),
+                 "--task", str(implementation / "approved-task.json"),
+                 "--evidence-manifest", str(diagnosis / "evidence-manifest.json")], 1,
+                output_must_contain="evidence manifest does not match result: task_id")
+
+    (seed / "REMOTE.md").write_text("official source advanced independently\n", encoding="utf-8")
+    git(seed, "add", "REMOTE.md")
+    git(seed, "commit", "-m", "fixture: official source advances")
+    git(seed, "push", "origin", "main")
+    expect_code("complete workflow stops when official source advances", gate_command, 23,
+                cwd=executor, output_must_contain="unexpected official HEAD")
+    require(git(executor, "rev-parse", "HEAD") == tested and not git(executor, "status", "--porcelain"),
+            "failed source gate changed the tested implementation")
+
+
 def main() -> None:
     if shutil.which("git") is None:
         raise SystemExit("BLOCKED: git is required for governance qualification")
@@ -859,6 +1012,7 @@ def main() -> None:
             qualify_pr_state_gate(tmp)
             qualify_live_gate(tmp)
             qualify_secret_scanner(tmp)
+            qualify_complete_workflows(tmp)
         except QualificationFailure as exc:
             print(f"FAIL: {exc}", file=sys.stderr)
             raise SystemExit(1)

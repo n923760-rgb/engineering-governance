@@ -25,3 +25,15 @@ The current master must preserve:
 The bootstrap must create canonical target-project storage only when run in a later explicitly authorized mutation round.
 
 The published `v1.0.0` release remains immutable historical evidence. Current source may evolve beyond it. No future tag or release is implied by source readiness.
+
+## Integrated workflow qualification
+
+The qualification suite must exercise a read-only diagnosis and a separately
+approved implementation against disposable real Git source and actual command
+output. Retained task/result/manifest binding, isolated remediation, evidence
+replay rejection, and a changed official-source stop must pass.
+
+This is deterministic reference-tool qualification, not production qualification
+or proof that an AI executor cannot access protected files/tools. A stable release
+decision still requires reviewed compatibility and the applicable live adoption
+and executor-boundary evidence.
