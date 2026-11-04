@@ -2,6 +2,12 @@
 
 ## Unreleased — 2.0.0-dev.1
 
+- Document MCP server provenance/maintenance approval, restricted installation, tool-call audit and isolated adversarial qualification.
+- Add GitHub Actions lockfile evaluation, public `pull_request_target` event policy, OIDC scoping, and APM dependency-review guidance.
+- Add vulnerability-to-deployment matching, container/host inventory, and off-host backup restoration gates, with a dated primary-source intake ledger.
+- Extend pre-task/pre-merge checklists and reference validation for the added security policies. Existing project adoption and v1.0.0 release remain unchanged.
+
+
 - Clarify reference-only maintenance, explicit target-project adoption scope and the separate source/adoption/executor/release decisions; add a concise Arabic handoff guide.
 
 - Exercise complete read-only and isolated implementation workflows with real Git commits, actual command output, retained evidence binding, replay rejection and changed-source stops.

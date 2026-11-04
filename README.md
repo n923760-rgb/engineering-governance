@@ -11,6 +11,10 @@ A reusable, project-agnostic operating system for AI-assisted production enginee
 - docs/RISK_PROFILES.md — LIGHT / STANDARD / HIGH and scoped blockers.
 - docs/GOVERNANCE_VERSIONING.md — adopted source/version tracking.
 - docs/UNTRUSTED_CONTENT_POLICY.md — external content and agent boundaries.
+- docs/MCP_SERVER_SECURITY_POLICY.md and docs/AGENT_EXECUTION_AUDIT_POLICY.md — approved MCP inventory, task-scoped tools, auditable boundaries.
+- docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md — Actions events, lockfiles, OIDC, APM and provenance.
+- docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md — advisory-to-runtime evidence and restore gates.
+- docs/SECURITY_ADOPTION_NOTES_2026-11-04.md — dated source review, not target adoption.
 
 The live target repository establishes product facts. Owner instructions and
 project contracts define intended behavior and authority. Historical memory is context.

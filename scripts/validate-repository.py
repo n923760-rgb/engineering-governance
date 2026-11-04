@@ -8,7 +8,10 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_PATHS = [
     "AGENTS.md","MASTER_GOVERNANCE.md","GLOBAL_REFERENCE.md","README.md","VERSION","CHANGELOG.md",
     "requirements.txt","docs/RISK_PROFILES.md","docs/GOVERNANCE_VERSIONING.md",
-    "docs/UNTRUSTED_CONTENT_POLICY.md","templates/PROJECT_AGENTS.md",
+    "docs/UNTRUSTED_CONTENT_POLICY.md","docs/MCP_SERVER_SECURITY_POLICY.md",
+    "docs/AGENT_EXECUTION_AUDIT_POLICY.md","docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md",
+    "docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md","docs/SECURITY_ADOPTION_NOTES_2026-11-04.md",
+    "templates/PROJECT_AGENTS.md",
     "scripts/governance_contracts.py","scripts/governance_lock.py",
     "scripts/verify-governance-lock.py","scripts/verify-repository-state.py",
     "schemas/governance-lock.schema.json",
@@ -82,6 +85,9 @@ def main():
                    "MASTER PROJECT RE-BASELINE + ENGINEERING SYSTEM DISCOVERY",
                    "START THE READ-ONLY MASTER RE-BASELINE NOW"]:
         if phrase not in master: fail(f"MASTER_GOVERNANCE.md missing anchor phrase: {phrase}")
+    for policy in ["docs/MCP_SERVER_SECURITY_POLICY.md", "docs/AGENT_EXECUTION_AUDIT_POLICY.md",
+                   "docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md", "docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md"]:
+        if policy not in master: fail(f"MASTER_GOVERNANCE.md missing security policy link: {policy}")
     expectations={
       "templates/TASK_PACKET.md":["## TASK TYPE","## AUTHORITY","## LIVE GATE","## STOP CONDITIONS","## SUCCESS CRITERIA"],
       "templates/RESULT_PACKET.md":["## Repository Identity","## Validation Actually Run","### Facts","### Inferences","### Unknowns","## Residual Risks"],

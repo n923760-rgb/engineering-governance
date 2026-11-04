@@ -19,6 +19,11 @@ This is the navigation entry point for the central, project-agnostic engineering
 13. `templates/RESOURCE_MAP.md` — authoritative resource locations.
 14. `templates/ADOPTION_STATUS.md` — adoption qualification ledger.
 15. `templates/PROTECTED_ACTIONS.md` — protected-action authorization record.
+16. `docs/MCP_SERVER_SECURITY_POLICY.md` — MCP package lifecycle, provenance and least privilege.
+17. `docs/AGENT_EXECUTION_AUDIT_POLICY.md` — runtime call authorization and adversarial checks.
+18. `docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md` — Actions, OIDC, lockfiles and agent dependencies.
+19. `docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md` — advisory triage, runtime checks and restore tests.
+20. `docs/SECURITY_ADOPTION_NOTES_2026-11-04.md` — dated research and applicability ledger.
 
 ## Permanent operating loop
 

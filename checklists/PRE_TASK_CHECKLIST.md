@@ -16,3 +16,7 @@
 - [ ] Protected actions are explicit.
 - [ ] Stop conditions are explicit.
 - [ ] Validation can actually prove the requested contract.
+- [ ] New MCP servers, skills, plugins, or tool permissions have an approved inventory and provenance, if applicable.
+- [ ] Any security advisory is matched to deployed artifacts and reachable paths; unknown runtime evidence is stated.
+- [ ] CI event/trust boundary, token/OIDC scope, transitive action dependencies and untrusted PR inputs are checked if affected.
+- [ ] Agent tool policy, unexpected secondary calls, audit redaction and sandbox qualification are scoped if affected.
