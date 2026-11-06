@@ -2,6 +2,7 @@
 
 ## Unreleased — 2.0.0-dev.1
 
+- Add evidence-based L1-L4 governance maturity assessment, temporary agent grants, independent verification, model/tool benchmark gates and rollback guidance.
 - Document MCP server provenance/maintenance approval, restricted installation, tool-call audit and isolated adversarial qualification.
 - Add GitHub Actions lockfile evaluation, public `pull_request_target` event policy, OIDC scoping, and APM dependency-review guidance.
 - Add vulnerability-to-deployment matching, container/host inventory, and off-host backup restoration gates, with a dated primary-source intake ledger.
