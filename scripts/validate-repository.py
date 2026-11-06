@@ -11,6 +11,7 @@ REQUIRED_PATHS = [
     "docs/UNTRUSTED_CONTENT_POLICY.md","docs/MCP_SERVER_SECURITY_POLICY.md",
     "docs/AGENT_EXECUTION_AUDIT_POLICY.md","docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md",
     "docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md","docs/SECURITY_ADOPTION_NOTES_2026-11-04.md",
+    "docs/GOVERNANCE_MATURITY_MODEL.md",
     "templates/PROJECT_AGENTS.md",
     "scripts/governance_contracts.py","scripts/governance_lock.py",
     "scripts/verify-governance-lock.py","scripts/verify-repository-state.py",
