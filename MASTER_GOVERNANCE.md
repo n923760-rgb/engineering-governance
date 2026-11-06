@@ -237,6 +237,11 @@ advisories from confirmed deployed exposure. Verify actual host kernels, worker
 images and library digests, as well as recoverable off-host backups, before
 claiming remediation. If inventory/runtime access is unavailable report UNKNOWN.
 
+Use docs/GOVERNANCE_MATURITY_MODEL.md to evaluate optional capability levels
+L1–L4, temporary task-bound grants, independent review, agent/tool version
+benchmarks, runtime tests, and safe rollback. These levels are descriptive,
+not permission grants, and never replace LIGHT/STANDARD/HIGH risk classification.
+
 These policies are central reference updates only. Review and adopt them per
 project through docs/GOVERNANCE_VERSIONING.md; their presence here authorizes no
 target changes, production fix, or policy migration.
