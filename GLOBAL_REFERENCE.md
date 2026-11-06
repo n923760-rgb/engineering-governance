@@ -24,6 +24,7 @@ This is the navigation entry point for the central, project-agnostic engineering
 18. `docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md` — Actions, OIDC, lockfiles and agent dependencies.
 19. `docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md` — advisory triage, runtime checks and restore tests.
 20. `docs/SECURITY_ADOPTION_NOTES_2026-11-04.md` — dated research and applicability ledger.
+21. `docs/GOVERNANCE_MATURITY_MODEL.md` — evidence-gated maturity levels and agent autonomy qualifications.
 
 ## Permanent operating loop
 
