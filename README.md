@@ -15,6 +15,7 @@ A reusable, project-agnostic operating system for AI-assisted production enginee
 - docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md — Actions events, lockfiles, OIDC, APM and provenance.
 - docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md — advisory-to-runtime evidence and restore gates.
 - docs/SECURITY_ADOPTION_NOTES_2026-11-04.md — dated source review, not target adoption.
+- docs/GOVERNANCE_MATURITY_MODEL.md — evidence-based L1–L4 capability levels, temporary grants and independent validation.
 
 The live target repository establishes product facts. Owner instructions and
 project contracts define intended behavior and authority. Historical memory is context.
