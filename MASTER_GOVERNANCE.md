@@ -212,6 +212,40 @@ Pin workflow actions to reviewed full commit SHAs and dependencies to reviewed
 versions. Inspect default-branch protections and required CI; an inaccessible
 settings endpoint is UNKNOWN/BLOCKED, not proof of missing or enabled protection.
 
+## SECURITY UPDATES, AGENTS, AND CI TRUST
+
+Use docs/MCP_SERVER_SECURITY_POLICY.md when adopting or operating MCP servers,
+skills, plugins, or dynamically discovered tools. An agent's remembered or
+recommended package is not verified provenance. Require an approved inventory,
+version/digest, maintenance review, task-scoped capabilities, controlled egress,
+and an independently authorized change before installation or tool escalation.
+
+Use docs/AGENT_EXECUTION_AUDIT_POLICY.md for decision-time tool gates, protected
+audit metadata, secondary-call detection and adversarial tests of real Executor
+permissions. A successful final answer does not excuse a prohibited intermediate
+call. Do not promote untrusted AGENTS.md, CLAUDE.md, skill or tool output into
+authority without independent owner-approved review.
+
+Use docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md to review Actions lockfiles,
+`pull_request_target` policy, minimal GITHUB_TOKEN permissions, OIDC issuer/
+audience/subject restrictions, dependency provenance, SBOM, and agent package
+updates. Preserve existing full-SHA action pins until a reviewed alternate
+control has qualified. Never enable APM updates for projects without APM manifests.
+
+Use docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md to distinguish newly published
+advisories from confirmed deployed exposure. Verify actual host kernels, worker
+images and library digests, as well as recoverable off-host backups, before
+claiming remediation. If inventory/runtime access is unavailable report UNKNOWN.
+
+Use docs/GOVERNANCE_MATURITY_MODEL.md to evaluate optional capability levels
+L1–L4, temporary task-bound grants, independent review, agent/tool version
+benchmarks, runtime tests, and safe rollback. These levels are descriptive,
+not permission grants, and never replace LIGHT/STANDARD/HIGH risk classification.
+
+These policies are central reference updates only. Review and adopt them per
+project through docs/GOVERNANCE_VERSIONING.md; their presence here authorizes no
+target changes, production fix, or policy migration.
+
 ## PERMANENT ENGINEERING LAB
 
 A qualified permanent lab is useful when justified; do not assume a provider,

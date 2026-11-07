@@ -60,6 +60,13 @@ Roles may be performed by one agent in sequence; obtain independent review when
 the project risk contract requires it. Follow docs/UNTRUSTED_CONTENT_POLICY.md
 for external content, logs, comments, attachments, and tool output.
 
+For projects using agents/MCP, privileged CI, or internet-facing services,
+review the relevant central security policies in docs/MCP_SERVER_SECURITY_POLICY.md,
+docs/AGENT_EXECUTION_AUDIT_POLICY.md,
+docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md, and
+docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md against their **actual** adopted
+reference and runtime. Do not silently enable a new dependency or tool.
+
 Stop only the dependent action when a real permission, source, secret, evidence,
 runtime, or destructive-impact boundary is unresolved. Continue independent
 authorized work. Never convert a blocked check into success.
