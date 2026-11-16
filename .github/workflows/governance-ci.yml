@@ -36,6 +36,8 @@ jobs:
         run: python scripts/scan-secrets.py
       - name: Run governance stop-condition qualification
         run: python qualification/run-qualification.py
+      - name: Qualify read-only GitHub ruleset guard (offline)
+        run: python -m unittest discover -s qualification -p 'test_github_ruleset_audit.py'
       - name: Verify Master Engineering System readiness
         run: python scripts/verify-system-readiness.py
       - name: Record source identity
