@@ -40,6 +40,8 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
     service = config["services"].get(service_name)
     if not isinstance(service, dict):
         return [f"service {service_name!r} is absent"]
+    if set(config["services"]) != {service_name}:
+        problems.append("pilot Compose must contain exactly one executor service")
 
     if not isinstance(service.get("image"), str) or not DIGEST.fullmatch(service["image"]):
         problems.append("image must be pinned to an immutable sha256 digest")
@@ -57,15 +59,9 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
     if service.get("cap_add"):
         problems.append("cap_add is prohibited")
     opts = service.get("security_opt", [])
-    if not isinstance(opts, list) or not any(
-        str(opt).lower() in ("no-new-privileges", "no-new-privileges:true") for opt in opts
-    ):
-        problems.append("security_opt must include no-new-privileges:true")
-    if isinstance(opts, list) and any(
-        "unconfined" in str(opt).lower() or "no-new-privileges:false" in str(opt).lower()
-        for opt in opts
-    ):
-        problems.append("unconfined or disabled security settings are prohibited")
+    # Reject duplicate/contradictory options and unreviewed LSM overrides.
+    if opts != ["no-new-privileges:true"]:
+        problems.append("security_opt must contain only no-new-privileges:true")
     if service.get("network_mode") != "none":
         problems.append("executor network_mode must be none (gateway is separate)")
 
@@ -74,7 +70,7 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
         problems.append("mem_limit must be between 128 MiB and 1 GiB")
     cpus = service.get("cpus")
     try:
-        cpu_value = float(cpus)
+        cpu_value = float(cpus) if not isinstance(cpus, bool) else 0.0
     except (TypeError, ValueError):
         cpu_value = 0.0
     if not 0 < cpu_value <= 1:
@@ -87,14 +83,16 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
         "ports", "expose", "devices", "device_cgroup_rules", "secrets", "configs",
         "group_add", "volumes_from", "extra_hosts", "sysctls", "dns", "dns_search",
         "gpus", "device_requests", "runtime",
+        "depends_on", "networks", "scale", "deploy", "develop", "tmpfs",
+        "logging", "credential_spec", "cgroup", "container_name", "shm_size",
         "environment", "env_file", "links", "extends", "cgroup_parent",
     ):
         if service.get(key):
             problems.append(f"{key} is prohibited in the isolated executor")
-    if service.get("pid") == "host" or service.get("ipc") == "host":
-        problems.append("host PID/IPC namespace is prohibited")
-    if service.get("userns_mode") == "host":
-        problems.append("host user namespace is prohibited")
+    for namespace in ("pid", "ipc", "userns_mode"):
+        # Even service:other and container:<id> are unsafe namespace sharing.
+        if service.get(namespace) not in (None, ""):
+            problems.append(f"{namespace} namespace override is prohibited")
     if service.get("restart") not in (None, "no"):
         problems.append("executor must not be configured as an always-on service")
 
@@ -111,6 +109,8 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
             problems.append("only an exact, writable named scratch volume at /workspace is allowed")
 
     declared_volumes = config.get("volumes", {})
+    if not isinstance(declared_volumes, dict) or set(declared_volumes) != {scratch_volume}:
+        problems.append("pilot Compose must declare only the approved scratch volume")
     volume = declared_volumes.get(scratch_volume) if isinstance(declared_volumes, dict) else None
     if not isinstance(volume, dict):
         problems.append("scratch volume must be explicitly declared at Compose top level")
