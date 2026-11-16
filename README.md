@@ -13,6 +13,7 @@ A reusable, project-agnostic operating system for AI-assisted production enginee
 - docs/UNTRUSTED_CONTENT_POLICY.md — external content and agent boundaries.
 - docs/MCP_SERVER_SECURITY_POLICY.md and docs/AGENT_EXECUTION_AUDIT_POLICY.md — approved MCP inventory, task-scoped tools, auditable boundaries.
 - docs/CI_SUPPLY_CHAIN_SECURITY_POLICY.md — Actions events, lockfiles, OIDC, APM and provenance.
+- docs/EXTERNAL_AGENT_SANDBOX_PILOT.md — optional, offline preflight for isolated external coding-agent executors; runtime qualification remains separate.
 - docs/VULNERABILITY_RESPONSE_AND_RECOVERY.md — advisory-to-runtime evidence and restore gates.
 - docs/SECURITY_ADOPTION_NOTES_2026-11-04.md — dated source review, not target adoption.
 - docs/GOVERNANCE_MATURITY_MODEL.md — evidence-based L1–L4 capability levels, temporary grants and independent validation.
