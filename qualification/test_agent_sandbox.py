@@ -73,6 +73,21 @@ class AgentSandboxTest(unittest.TestCase):
             "published port": {"ports": [{"target": 1234, "published": "1234"}]},
             "host pid": {"pid": "host"},
             "host user namespace": {"userns_mode": "host"},
+            "shared process namespace": {"pid": "service:production"},
+            "shared container process namespace": {"pid": "container:production"},
+            "shared IPC namespace": {"ipc": "service:production"},
+            "custom user namespace": {"userns_mode": "container:production"},
+            "dependent service": {"depends_on": ["production"]},
+            "other network": {"networks": ["production"]},
+            "replicated executor": {"scale": 20},
+            "deploy replicas": {"deploy": {"replicas": 20}},
+            "extra writable tmpfs": {"tmpfs": ["/tmp"]},
+            "remote log destination": {"logging": {"driver": "syslog"}},
+            "container name collision": {"container_name": "production"},
+            "host cgroup namespace": {"cgroup": "host"},
+            "bool CPU limit": {"cpus": True},
+            "security option override": {"security_opt": ["no-new-privileges:true", "no-new-privileges:false"]},
+            "security option alternative": {"security_opt": ["no-new-privileges:true", "apparmor:unconfined"]},
             "secrets": {"secrets": [{"source": "prod-secret"}]},
             "restart daemon": {"restart": "unless-stopped"},
         }
@@ -98,6 +113,20 @@ class AgentSandboxTest(unittest.TestCase):
                 else:
                     data["volumes"]["agent-exec-scratch"] = val
                 self.run_case(data, False)
+
+    def test_reject_extra_compose_resources(self):
+        extra_service = copy.deepcopy(BASE)
+        extra_service["services"]["production"] = {
+            "image": "example.invalid/production:latest",
+            "privileged": True,
+        }
+        self.run_case(extra_service, False)
+
+        extra_volume = copy.deepcopy(BASE)
+        extra_volume["volumes"]["production"] = {
+            "name": "prod-postgres", "driver": "local"
+        }
+        self.run_case(extra_volume, False)
 
     def test_no_service(self):
         self.run_case({"services": {}}, False)
