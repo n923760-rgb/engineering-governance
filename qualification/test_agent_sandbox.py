@@ -9,6 +9,7 @@ from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "validate-agent-sandbox.py"
 BASE = {
+    "volumes": {"agent-exec-scratch": {"name": "agent-exec-scratch", "driver": "local"}},
     "services": {"hermes-executor": {
         "image": "example.invalid/agent@sha256:" + "a" * 64,
         "user": "10001:10001",
