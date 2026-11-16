@@ -82,6 +82,23 @@ class AgentSandboxTest(unittest.TestCase):
                 data["services"]["hermes-executor"].update(change)
                 self.run_case(data, False)
 
+    def test_reject_volume_level_escape_hatches(self):
+        cases = {
+            "implicit volume": None,
+            "external volume": {"name": "agent-exec-scratch", "external": True},
+            "host bind via driver options": {"name": "agent-exec-scratch", "driver": "local", "driver_opts": {"type": "none", "o": "bind", "device": "/srv/production"}},
+            "alternate volume name": {"name": "prod-postgres", "driver": "local"},
+            "non-local driver": {"name": "agent-exec-scratch", "driver": "other"},
+        }
+        for name, val in cases.items():
+            with self.subTest(name=name):
+                data = copy.deepcopy(BASE)
+                if val is None:
+                    data.pop("volumes")
+                else:
+                    data["volumes"]["agent-exec-scratch"] = val
+                self.run_case(data, False)
+
     def test_no_service(self):
         self.run_case({"services": {}}, False)
 
