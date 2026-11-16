@@ -2,12 +2,12 @@
 
 Status: REFERENCE ONLY. This document does not install Hermes, authorize a target project, or qualify a running VPS.
 
-This contract applies to the disposable **tool/executor sandbox**, NOT the networked Hermes gateway/controller. Hermes, Codex and Claude Code may be evaluated under the same boundary. Never start by installing an agent as root or mounting the Docker socket, /home/aidev, project worktrees, SSH keys, API keys, production volumes or backups into a model-controlled process.
+This contract applies to the disposable **tool/executor sandbox**, NOT the networked Hermes gateway/controller. Hermes, Codex and Claude Code may be evaluated under the same boundary. Never start by installing an agent as root or mounting the Docker socket, home directories, project worktrees, SSH keys, API keys, production volumes or backups into a model-controlled process.
 
 ## Qualification sequence
 
 1. Record owner authorization, target repository, exact official source SHA, scope, risk, time/resource limits and stop conditions using the existing Task Packet. Inspect live PR state before mutation.
-2. Inventory actual VPS CPU/memory/disk, existing services, network, volumes, ports, backups and health. Do not assume spare capacity from nominal 4 CPU / 8 GiB specifications.
+2. Inventory actual VPS CPU/memory/disk, existing services, network, volumes, ports, backups and health. Do not assume spare host capacity from an advertised machine size.
 3. Review the official Hermes source and immutable image digest, skills/plugins/hooks, model provider and budget. The Hermes gateway may need external model API access: independently review and constrain its outbound network and tool rights. Never equate gateway configuration or an LLM prompt with an OS security boundary.
 4. Use a throwaway Docker Compose executor with explicit non-root numeric user, read-only root filesystem, all capabilities dropped, no-new-privileges, network_mode none, exactly one named scratch volume at /workspace, no host bind mounts/credentials/exposed ports, cpus <= 1, mem_limit <= 1 GiB and pids_limit <= 128. Keep pilot concurrency at one.
 5. Validate rendered Compose JSON, not just the YAML source. With the governance repository checked out, run:
