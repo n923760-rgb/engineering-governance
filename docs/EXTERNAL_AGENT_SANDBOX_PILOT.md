@@ -9,7 +9,7 @@ This contract applies to the disposable **tool/executor sandbox**, NOT the netwo
 1. Record owner authorization, target repository, exact official source SHA, scope, risk, time/resource limits and stop conditions using the existing Task Packet. Inspect live PR state before mutation.
 2. Inventory actual VPS CPU/memory/disk, existing services, network, volumes, ports, backups and health. Do not assume spare host capacity from an advertised machine size.
 3. Review the official Hermes source and immutable image digest, skills/plugins/hooks, model provider and budget. The Hermes gateway may need external model API access: independently review and constrain its outbound network and tool rights. Never equate gateway configuration or an LLM prompt with an OS security boundary.
-4. Use a throwaway Docker Compose executor with explicit non-root numeric user, read-only root filesystem, all capabilities dropped, no-new-privileges, network_mode none, exactly one named scratch volume at /workspace, no host bind mounts/credentials/exposed ports, cpus <= 1, mem_limit <= 1 GiB and pids_limit <= 128. Keep pilot concurrency at one.
+4. Use a throwaway Docker Compose executor with explicit non-root numeric user, read-only root filesystem, all capabilities dropped, no-new-privileges, network_mode none, exactly one named scratch volume at /workspace with an explicitly matching top-level name, non-external local driver and no driver options; no host bind mounts/credentials/exposed ports, cpus <= 1, mem_limit <= 1 GiB and pids_limit <= 128. Keep pilot concurrency at one.
 5. Validate rendered Compose JSON, not just the YAML source. With the governance repository checked out, run:
 
         umask 077
