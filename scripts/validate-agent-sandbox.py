@@ -110,6 +110,16 @@ def check(config: object, service_name: str, scratch_volume: str) -> list[str]:
                 or mount.get("read_only") is True):
             problems.append("only an exact, writable named scratch volume at /workspace is allowed")
 
+    declared_volumes = config.get("volumes", {})
+    volume = declared_volumes.get(scratch_volume) if isinstance(declared_volumes, dict) else None
+    if not isinstance(volume, dict):
+        problems.append("scratch volume must be explicitly declared at Compose top level")
+    elif (volume.get("external") is True
+          or volume.get("driver") not in (None, "local")
+          or volume.get("driver_opts")
+          or volume.get("name") != scratch_volume):
+        problems.append("scratch volume must be local, non-external, unbound and exactly named")
+
     # Top-level service policy is only one piece of a complete Compose/runtime review.
     return problems
 
