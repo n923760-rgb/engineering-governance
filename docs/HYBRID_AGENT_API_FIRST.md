@@ -10,7 +10,7 @@ An optional future Hermes API server is a **tool-capable agent process**, not me
 
 ## API-first contract
 
-The sample in examples/hybrid-agent-plan.example.json is intentionally nonfunctional: the hostname ends in .invalid. The model API URL must be remotely hosted HTTPS, with **no key embedded** in the URL or checked-in plan. Credentials must be issued and injected separately with task-scoped, auditable permissions. Exact outbound host, DNS/IP changes, request destination, and secret handling must be enforced by infrastructure beyond this static validator.
+The sample in examples/hybrid-agent-plan.example.json is intentionally nonfunctional: the hostname ends in .invalid. The model API URL must be remotely hosted HTTPS, with **no key embedded** in the URL or checked-in plan. For this conservative reference profile, endpoints with whitespace, control characters, backslashes or percent-encoded path elements are rejected before URL parsing; use a plain canonical provider base path (such as /v1). Credentials must be issued and injected separately with task-scoped, auditable permissions. Exact outbound host, DNS/IP changes, request destination, and secret handling must be enforced by infrastructure beyond this static validator.
 
 The initial profile is deliberately limited:
 
