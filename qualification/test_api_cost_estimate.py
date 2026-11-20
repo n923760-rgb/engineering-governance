@@ -37,11 +37,15 @@ class CostEstimateTests(unittest.TestCase):
 
     def test_cost_precision_not_rounded_down(self):
         packet = copy.deepcopy(self.example)
-        packet["rates_usd_per_million"] = {"input": "0.00000001", "output": "0.00000001"}
-        packet["limits"]["max_task_cost_usd"] = "0.00000001"
+        # 900 tokens at 1.00000001 USD/M costs just over $0.0009;
+        # a displayed rounded value must never turn the overage into PASS.
+        packet["rates_usd_per_million"] = {"input": "1.00000001", "output": "1.00000001"}
+        packet["limits"]["max_task_cost_usd"] = "0.0009"
+        result = module.estimate(packet)
+        self.assertFalse(result["within_declared_limits"])
+        self.assertEqual(result["api_cost_estimate"], "OVER_CAP")
+        packet["limits"]["max_task_cost_usd"] = "0.001"
         self.assertTrue(module.estimate(packet)["within_declared_limits"])
-        packet["limits"]["max_total_tokens"] = 850
-        self.assertFalse(module.estimate(packet)["within_declared_limits"])
 
     def test_reject_untrusted_usage(self):
         for section, name, val in (
