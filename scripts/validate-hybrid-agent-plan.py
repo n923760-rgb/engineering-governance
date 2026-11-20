@@ -41,6 +41,13 @@ def exact_fields(obj, fields, label, errors):
 def remote_https_url(value):
     if not isinstance(value, str) or len(value) > 2048:
         return False
+    # urlsplit silently strips some embedded control characters. Reject them
+    # before parsing, including whitespace, path backslashes and encoded
+    # characters whose decoding could alter downstream URL interpretation.
+    if any(ord(ch) <= 32 or ord(ch) == 127 for ch in value):
+        return False
+    if "\\" in value or "%" in value:
+        return False
     try:
         u = urlsplit(value)
         host = u.hostname
