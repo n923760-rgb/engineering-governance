@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "deployment": "reference_only_no_runtime_activation",
+  "model_api": {
+    "kind": "remote_inference_only",
+    "base_url": "https://api.example.invalid/v1",
+    "credentials": "runtime_secret_reference_only"
+  },
+  "hermes": {
+    "mode": "disabled",
+    "requires_separate_runtime_qualification": true
+  },
+  "limits": {
+    "max_parallel_tasks": 1,
+    "max_tool_calls": 20,
+    "max_task_seconds": 900,
+    "max_cost_usd": "0.50"
+  },
+  "permissions": {
+    "isolated_worktree": true,
+    "production_read": false,
+    "production_write": false,
+    "docker_socket": false,
+    "host_secrets": false,
+    "main_branch_write": false
+  },
+  "protected_actions": {
+    "merge": "owner_approval",
+    "deploy": "owner_approval",
+    "release": "owner_approval",
+    "credential_changes": "owner_approval",
+    "policy_changes": "owner_approval"
+  }
+}

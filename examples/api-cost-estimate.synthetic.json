@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "task_id": "synthetic_single_task",
+  "source_type": "synthetic_fixture",
+  "tokens": {
+    "input": 600,
+    "output": 300
+  },
+  "rates_usd_per_million": {
+    "input": "0.50",
+    "output": "2.00"
+  },
+  "limits": {
+    "max_task_cost_usd": "0.50",
+    "max_total_tokens": 20000
+  }
+}

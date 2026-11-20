@@ -1,0 +1,51 @@
+name: Hybrid API-first agent plan qualification
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/hybrid-agent-plan-ci.yml'
+      - 'scripts/validate-hybrid-agent-plan.py'
+      - 'qualification/test_hybrid_agent_plan.py'
+      - 'examples/hybrid-agent-plan.example.json'
+      - 'docs/HYBRID_AGENT_API_FIRST.md'
+      - 'scripts/estimate-api-task-cost.py'
+      - 'qualification/test_api_cost_estimate.py'
+      - 'examples/api-cost-estimate.synthetic.json'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hybrid-agent-plan-ci.yml'
+      - 'scripts/validate-hybrid-agent-plan.py'
+      - 'qualification/test_hybrid_agent_plan.py'
+      - 'examples/hybrid-agent-plan.example.json'
+      - 'docs/HYBRID_AGENT_API_FIRST.md'
+      - 'scripts/estimate-api-task-cost.py'
+      - 'qualification/test_api_cost_estimate.py'
+      - 'examples/api-cost-estimate.synthetic.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hybrid-agent-plan-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact revision without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Validate API-first example
+        run: python3 scripts/validate-hybrid-agent-plan.py examples/hybrid-agent-plan.example.json
+      - name: Qualify fail-closed hybrid plan behavior
+        run: python3 -m unittest discover -s qualification -p 'test_hybrid_agent_plan.py' -v
+      - name: Qualify offline API usage cost fixture
+        run: python3 scripts/estimate-api-task-cost.py examples/api-cost-estimate.synthetic.json
+      - name: Test API budget rejection and decimal precision
+        run: python3 -m unittest discover -s qualification -p 'test_api_cost_estimate.py' -v
+      - name: Confirm source commit
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
