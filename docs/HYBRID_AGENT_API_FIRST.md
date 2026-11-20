@@ -28,6 +28,32 @@ Validate a proposed reference plan locally without contacting any remote service
 
 Expected valid output includes HYBRID_PREFLIGHT=PASS, RUNTIME_ENFORCEMENT=NOT_VERIFIED, HERMES_ACTIVATION=DISABLED and DEPLOYMENT=NOT_AUTHORIZED.
 
+## Offline API usage/cost evaluation (synthetic only)
+
+The optional `scripts/estimate-api-task-cost.py` evaluates **provider-reported
+token counts** and separately reviewed per-million-token USD rates against
+task limits. A synthetic, deliberately made-up price fixture is provided at
+`examples/api-cost-estimate.synthetic.json` for deterministic tests only.
+
+Run without any network connection, provider key, or real API call:
+
+    python3 scripts/estimate-api-task-cost.py examples/api-cost-estimate.synthetic.json
+    python3 -m unittest discover -s qualification -p 'test_api_cost_estimate.py' -v
+
+The estimator rejects missing/extra keys, duplicate JSON keys, invalid or
+negative counts, nonsensical rates, unlimited task budgets, and costs above
+the supplied cap. Cost comparison uses exact Decimal arithmetic; the
+displayed estimate is rounded upward. It returns exit 3 for an over-cap
+estimate and exit 2 for malformed packets.
+
+**Do not treat a successful estimate as billing proof or a runtime spending
+limit.** Tool calls, cached-token pricing, retries, storage, training, provider
+fees, tiered rates, and unreported tokens are not represented in this simple
+two-rate example. Choose a provider independently, verify current published
+rates and actual usage fields, and build a separate runtime call limiter and
+budget gate before any paid API invocation. Never submit real credentials or
+private code in JSON cost fixtures.
+
 ## Operational adoption sequence (separate authorization required)
 
 1. Inspect current project/server resources, runtime, GitHub state, existing PRs, approval policy and data classification.
