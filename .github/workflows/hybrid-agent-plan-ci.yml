@@ -8,6 +8,9 @@ on:
       - 'qualification/test_hybrid_agent_plan.py'
       - 'examples/hybrid-agent-plan.example.json'
       - 'docs/HYBRID_AGENT_API_FIRST.md'
+      - 'scripts/estimate-api-task-cost.py'
+      - 'qualification/test_api_cost_estimate.py'
+      - 'examples/api-cost-estimate.synthetic.json'
   push:
     branches: [main]
     paths:
@@ -16,6 +19,9 @@ on:
       - 'qualification/test_hybrid_agent_plan.py'
       - 'examples/hybrid-agent-plan.example.json'
       - 'docs/HYBRID_AGENT_API_FIRST.md'
+      - 'scripts/estimate-api-task-cost.py'
+      - 'qualification/test_api_cost_estimate.py'
+      - 'examples/api-cost-estimate.synthetic.json'
 
 permissions:
   contents: read
@@ -37,5 +43,9 @@ jobs:
         run: python3 scripts/validate-hybrid-agent-plan.py examples/hybrid-agent-plan.example.json
       - name: Qualify fail-closed hybrid plan behavior
         run: python3 -m unittest discover -s qualification -p 'test_hybrid_agent_plan.py' -v
+      - name: Qualify offline API usage cost fixture
+        run: python3 scripts/estimate-api-task-cost.py examples/api-cost-estimate.synthetic.json
+      - name: Test API budget rejection and decimal precision
+        run: python3 -m unittest discover -s qualification -p 'test_api_cost_estimate.py' -v
       - name: Confirm source commit
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
