@@ -45,11 +45,15 @@ def main() -> None:
     args = parser.parse_args()
 
     target = Path(args.path)
-    if not target.exists() or not target.is_dir():
-        stop(f"environment path is unavailable or not a directory: {target}", EXIT_PATH_UNAVAILABLE)
+    try:
+        if not target.is_dir():
+            stop(f"environment path is unavailable or not a directory: {target}", EXIT_PATH_UNAVAILABLE)
+        resolved_target = target.resolve(strict=True)
+    except (OSError, RuntimeError) as exc:
+        stop(f"cannot resolve environment path for {target}: {exc}", EXIT_PATH_UNAVAILABLE)
 
     try:
-        usage = shutil.disk_usage(target)
+        usage = shutil.disk_usage(resolved_target)
     except OSError as exc:
         stop(f"cannot inspect disk capacity for {target}: {exc}", EXIT_PATH_UNAVAILABLE)
 
@@ -63,7 +67,7 @@ def main() -> None:
         try:
             with tempfile.NamedTemporaryFile(
                 mode="wb",
-                dir=target,
+                dir=resolved_target,
                 prefix=".governance-write-test-",
                 delete=True,
             ) as handle:
@@ -74,7 +78,7 @@ def main() -> None:
             stop(f"environment path is not safely writable: {target}: {exc}", EXIT_NOT_WRITABLE)
 
     print("ENVIRONMENT_GATE=PASS")
-    print(f"path={target.resolve()}")
+    print(f"path={resolved_target}")
     print(f"disk_total_bytes={usage.total}")
     print(f"disk_used_bytes={usage.used}")
     print(f"disk_free_bytes={usage.free}")

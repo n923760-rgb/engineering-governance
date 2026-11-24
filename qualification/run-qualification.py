@@ -357,6 +357,13 @@ def qualify_environment_gate(tmp: Path) -> None:
     )
 
     expect_code(
+        "overlong environment path rejected with the path exit code",
+        [sys.executable, str(ENVIRONMENT_GATE), "--path", str(env_dir / ("x" * 300))],
+        30,
+        output_must_contain="STOP:",
+    )
+
+    expect_code(
         "insufficient disk capacity stops execution",
         [
             sys.executable,
