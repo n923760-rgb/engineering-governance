@@ -1,0 +1,39 @@
+name: Read-only VPS capacity observer qualification
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/vps-capacity-observer-ci.yml'
+      - 'scripts/observe-vps-capacity.py'
+      - 'qualification/test_vps_capacity_observer.py'
+      - 'docs/READ_ONLY_VPS_CAPACITY_CHECK.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vps-capacity-observer-ci.yml'
+      - 'scripts/observe-vps-capacity.py'
+      - 'qualification/test_vps_capacity_observer.py'
+      - 'docs/READ_ONLY_VPS_CAPACITY_CHECK.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vps-capacity-observer-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Run offline read-only observer qualification
+        run: python3 -m unittest discover -s qualification -p 'test_vps_capacity_observer.py' -v
+      - name: Smoke test observer on GitHub runner (not VPS)
+        run: python3 scripts/observe-vps-capacity.py --path .
+      - name: Check tested source identity
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
